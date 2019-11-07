@@ -1,0 +1,58 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+    }
+    signingConfigs {
+        debug {
+
+            storeFile file("../keystore/test.jks")
+            storePassword "aaa111"
+            keyAlias "key0"
+            keyPassword "aaa111"
+        }
+
+        release {
+            storeFile file("../keystore/test.jks")
+            storePassword "aaa111"
+            keyAlias "key0"
+            keyPassword "aaa111"
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+
+dependencies {
+    /*************Base-Lib*************/
+    //Google - V7
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
+    //Google - V4
+    implementation "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"
+    //Google - Design
+    implementation "com.android.support:design:$rootProject.ext.supportLibraryVersion"
+
+
+    implementation project(':retrofitrx')
+//    implementation 'com.shuai:retrofit-rx-net:0.0.1'
+
+}
