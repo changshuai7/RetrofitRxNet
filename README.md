@@ -47,13 +47,6 @@ dependencies {
                     return super.isLogDebug();
                 }
 
-                /**
-                 * FileProvider定义
-                 */
-                @Override
-                public String getFileProviderAuthority() {
-                    return MyConstants.Authority.FILE_AUTHORITY;
-                }
             })
             .requestConfig(new NetRequestConfigProvider() {
 
@@ -202,30 +195,47 @@ TestServiceApi testServiceApi = factory.create("http://123.445.666.777:8980/").c
 无论上述那种方式请求网络，都可以实现baseUrl的动态替换、公参加入等完整功能。
 
 
+## 4、混淆
+```
+-keepattributes EnclosingMethod
 
-## 4、开发计划和进度
+-dontwarn javax.annotation.**
+-dontwarn javax.inject.**
 
-开发进度：
+# OkHttp3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
 
-1、整体框架大致完成（OK）
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
 
-2、get/post请求开发完成（OK）
+# RxJava RxAndroid
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
 
-未完成：
+# Gson
+-keep class com.google.gson.stream.** { *; }
+-keepattributes EnclosingMethod
+#-keep class org.xz_sale.entity.**{*;}//这是你定义的实体类
 
-1、下载上传（ing...）
-
-思考：
-
-1、是否使用公共参数/请求头可通过请求头动态配置
-
-2、新参数无法覆盖默认配置的参数，由于系统原因导致的问题。思考解决方案。
-
-3、网络请求生命周期的控制和收尾
-
-4、外部增加对OkHttpClient的扩展
-
-5、OkHttpClient可以使用一个单例的思考
+# 不混淆实体类
+-keep public class * implements java.io.Serializable {*;}
+-keep public class * implements android.os.Parcelable {*;}
+```
 
 ## 5、写在后面
 针对有些业务，网络请求地址可能出现极其繁多复杂，难于管理的情况，baseUrl动态替换的方案可能略显逊色。我们建议你可以通过全路径传入url地址来请求网络。

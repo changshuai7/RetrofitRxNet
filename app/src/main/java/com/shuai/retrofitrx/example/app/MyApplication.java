@@ -72,13 +72,6 @@ public class MyApplication extends Application {
                         return super.isLogDebug();
                     }
 
-                    /**
-                     * FileProvider定义
-                     */
-                    @Override
-                    public String getFileProviderAuthority() {
-                        return MyConstants.Authority.FILE_AUTHORITY;
-                    }
                 })
                 .requestConfig(new NetRequestConfigProvider() {
 

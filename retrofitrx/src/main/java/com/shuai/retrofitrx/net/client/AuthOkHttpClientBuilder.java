@@ -5,10 +5,8 @@ import android.content.Context;
 import com.shuai.retrofitrx.config.NetConfig;
 import com.shuai.retrofitrx.constants.NetConstants;
 import com.shuai.retrofitrx.net.Interceptor.AuthParamsInterceptor;
-import com.shuai.retrofitrx.net.Interceptor.CacheControlInterceptor;
 import com.shuai.retrofitrx.net.Interceptor.HttpLoggingInterceptor;
 import com.shuai.retrofitrx.net.Interceptor.MoreBaseUrlInterceptor;
-import com.shuai.retrofitrx.net.Interceptor.ResponseHeaderInterceptor;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -50,16 +48,6 @@ public class AuthOkHttpClientBuilder extends AbstractOkHttpClientBuilder {
          * 增加默认的全局配置参数
          */
         builder.addInterceptor(new AuthParamsInterceptor());
-
-        /**
-         * 增加缓存策略，配置通过BaseConfig配置需要缓存response的url，配置之后响应结果自动缓存20分钟
-         */
-        builder.addNetworkInterceptor(new CacheControlInterceptor());
-
-        /**
-         * 响应头拦截器
-         */
-        builder.addInterceptor(new ResponseHeaderInterceptor());
 
         /**
          * 日志拦截器
