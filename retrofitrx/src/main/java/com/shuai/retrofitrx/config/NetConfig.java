@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.shuai.retrofitrx.config.provider.NetBaseConfigProvider;
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
-import com.shuai.retrofitrx.config.provider.NetResponseConfigProvider;
 import com.shuai.retrofitrx.utils.Logger;
 
 
@@ -25,7 +24,7 @@ public class NetConfig {
     }
 
     public static Application getApp() {
-        return sApp; // TODO 可能会有多线程问题。单例的解决。
+        return sApp;
     }
 
     /**
@@ -46,7 +45,6 @@ public class NetConfig {
 
         private NetBaseConfigProvider baseConfig = null;                    //基础配置：【必须配置】
         private NetRequestConfigProvider requestConfigProvider = null;      //请求配置：【必须配置】
-        private NetResponseConfigProvider responseConfigProvider = null;    //响应配置：可选配置
 
         public Config baseConfig(NetBaseConfigProvider baseConfig) {
             this.baseConfig = baseConfig;
@@ -59,10 +57,6 @@ public class NetConfig {
             return this;
         }
 
-        public Config responseConfig(NetResponseConfigProvider responseConfigProvider) {
-            this.responseConfigProvider = responseConfigProvider;
-            return this;
-        }
 
 
         //////////////////////////////////GET AND SET////////////////////////////////////////
@@ -75,9 +69,6 @@ public class NetConfig {
             return requestConfigProvider;
         }
 
-        public NetResponseConfigProvider getResponseConfigProvider() {
-            return responseConfigProvider;
-        }
 
         //////////////////////////////////GET AND SET////////////////////////////////////////
 

@@ -6,9 +6,7 @@ import okhttp3.OkHttpClient;
 
 /**
  * @author changshuai
- *
- * // TODO 思考OkHttpClient是否有必要作为一个单例。单例模式的缺点便是有可能导致数据出错，且不够灵活，传参不便。优点便是节省内存。
- *
+ **
  */
 public class AuthClient {
     private static volatile OkHttpClient okHttpClient = null;//volatile会把变量立即同步到内存中

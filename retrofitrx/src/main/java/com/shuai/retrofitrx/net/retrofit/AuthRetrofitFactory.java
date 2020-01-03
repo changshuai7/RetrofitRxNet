@@ -3,6 +3,7 @@ package com.shuai.retrofitrx.net.retrofit;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.shuai.retrofitrx.net.client.AuthClient;
 import com.shuai.retrofitrx.net.client.AuthOkHttpClientBuilder;
 
 import okhttp3.OkHttpClient;
@@ -25,8 +26,11 @@ public class AuthRetrofitFactory extends AbstractRetrofitFactory {
 
     @Override
     public OkHttpClient getClient(String baseUrl) {
-        // TODO 思考OkHttpClient是否有必要作为一个单例。如果采用单例，虽然节省内存，但是会导致baseUrl无法传入，MoreBaseUrlInterceptor无法获取到baseUrl来执行拦截
-        // TODO 事实上一个Retrofit对象对应一个OkHttpClient是可以接受的。不会造成多大的内存浪费。
+
+        // 这里其实最好是采用一个单例：return AuthClient.newInstance(ctx);
+        // 但是如果采用单例，虽然节省内存，但是会导致baseUrl无法传入，MoreBaseUrlInterceptor无法获取到baseUrl来执行拦截
+        // 事实上一个Retrofit对象对应一个OkHttpClient是可以接受的。不会造成多大的内存浪费。所以这里直接new 一个OkHttpClient
+
         return new AuthOkHttpClientBuilder(ctx,baseUrl).build();
     }
 

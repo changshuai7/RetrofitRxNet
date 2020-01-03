@@ -19,9 +19,5 @@ public abstract class NetBaseConfigProvider {
         return isDebug();
     }
 
-    /**
-     * FileProvider定义
-     */
-    public abstract String getFileProviderAuthority();
 
 }

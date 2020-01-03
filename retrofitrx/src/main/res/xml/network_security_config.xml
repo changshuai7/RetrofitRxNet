@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--使用OkHttp3在Android P 出现的错误：CLEARTEXT communication to host not permitted by network-->
+<!--https://www.jianshu.com/p/fa6664cda808-->
+
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
