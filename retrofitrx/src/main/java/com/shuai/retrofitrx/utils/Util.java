@@ -22,7 +22,7 @@ public class Util {
      * @param collection
      * @return
      */
-    public static boolean CollectionisEmpty(Collection collection) {
+    public static boolean CollectionIsEmpty(Collection collection) {
         return collection == null || collection.isEmpty();
     }
 

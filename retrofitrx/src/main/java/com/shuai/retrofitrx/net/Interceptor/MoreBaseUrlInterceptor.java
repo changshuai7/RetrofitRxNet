@@ -2,6 +2,7 @@ package com.shuai.retrofitrx.net.Interceptor;
 
 
 import com.shuai.retrofitrx.config.NetConfig;
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
 import com.shuai.retrofitrx.constants.NetConstants;
 import com.shuai.retrofitrx.utils.Logger;
 import com.shuai.retrofitrx.utils.Util;
@@ -23,10 +24,15 @@ import okhttp3.Response;
 
 public class MoreBaseUrlInterceptor implements Interceptor {
 
-    private String baseUrl;
 
-    public MoreBaseUrlInterceptor(String baseUrl) {
-        this.baseUrl = baseUrl;
+    private NetRequestConfigProvider netRequestConfigProvider;
+
+    public MoreBaseUrlInterceptor(NetRequestConfigProvider netRequestConfigProvider) {
+        this.netRequestConfigProvider = netRequestConfigProvider;
+    }
+
+    public MoreBaseUrlInterceptor() {
+        this.netRequestConfigProvider = NetConfig.getConfig().getRequestConfigProvider();
     }
 
     @Override
@@ -48,12 +54,12 @@ public class MoreBaseUrlInterceptor implements Interceptor {
             //获取头信息中配置的value
             String domainName = domainHostList.get(0);
 
-            if (NetConfig.getConfig().getRequestConfigProvider() != null) {
+            if (netRequestConfigProvider!= null) {
 
-                Map<String, String> baseUrls = NetConfig.getConfig().getRequestConfigProvider().getBaseUrls();
+                Map<String, String> baseUrls = netRequestConfigProvider.getBaseUrls();
 
-                if (baseUrls != null && baseUrls.size() > 0 && baseUrls.keySet().contains(domainName) && Util.checkUrl(baseUrl)) {
-                    HttpUrl oldBaseUrl = HttpUrl.parse(baseUrl);
+                if (baseUrls != null && baseUrls.size() > 0 && baseUrls.keySet().contains(domainName) && Util.checkUrl(netRequestConfigProvider.getBaseUrl())) {
+                    HttpUrl oldBaseUrl = HttpUrl.parse(netRequestConfigProvider.getBaseUrl());
                     HttpUrl newBaseUrl = null;
 
                     for (Map.Entry<String, String> entry : baseUrls.entrySet()) {

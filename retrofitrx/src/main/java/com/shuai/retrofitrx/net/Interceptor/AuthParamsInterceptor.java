@@ -17,6 +17,16 @@ import okhttp3.Response;
 
 public class AuthParamsInterceptor implements Interceptor {
 
+    private NetRequestConfigProvider netRequestConfigProvider;
+
+    public AuthParamsInterceptor(NetRequestConfigProvider netRequestConfigProvider) {
+        this.netRequestConfigProvider = netRequestConfigProvider;
+    }
+
+    public AuthParamsInterceptor() {
+        this.netRequestConfigProvider = NetConfig.getConfig().getRequestConfigProvider();
+    }
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originRequest = chain.request();
@@ -68,25 +78,22 @@ public class AuthParamsInterceptor implements Interceptor {
     }
 
     private Map getDefaultUrlParams() {
-        NetRequestConfigProvider provider = NetConfig.getConfig().getRequestConfigProvider();
-        if (provider != null) {
-            return provider.getParamsMap();
+        if (netRequestConfigProvider != null) {
+            return netRequestConfigProvider.getParamsMap();
         }
         return Collections.EMPTY_MAP;
     }
 
     private Map getDefaultHeaders() {
-        NetRequestConfigProvider provider = NetConfig.getConfig().getRequestConfigProvider();
-        if (provider != null) {
-            return provider.getHeaderMap();
+        if (netRequestConfigProvider != null) {
+            return netRequestConfigProvider.getHeaderMap();
         }
         return Collections.EMPTY_MAP;
     }
 
     private Map getDefaultBodyParams() {
-        NetRequestConfigProvider provider = NetConfig.getConfig().getRequestConfigProvider();
-        if (provider != null) {
-            return provider.getBodyMap();
+        if (netRequestConfigProvider != null) {
+            return netRequestConfigProvider.getBodyMap();
         }
         return Collections.EMPTY_MAP;
     }

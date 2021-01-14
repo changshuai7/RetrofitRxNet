@@ -16,7 +16,7 @@
 
 ```
 dependencies {
-        implementation 'com.shuai:retrofit-rx-net:0.0.1'
+        implementation 'com.shuai:retrofit-rx-net:x.x.x'
 }
 
 版本号 一般采用Tag中最新的版本。
@@ -173,26 +173,18 @@ ApiFactory.getApiService(TestServiceApi.class)
 
 ##### 2、扩展请求方式：
 ```
-AuthRetrofitFactory factory = new AuthRetrofitFactory(new Gson(),MyApplication.getInstance());
-TestServiceApi testServiceApi = factory.create().create(TestServiceApi.class);
+public static AuthRetrofitFactory myAuthRetrofitFactory
+            = new AuthRetrofitFactory(MyApplication.getInstance(),new MyAppNetRequestConfig());
 
-testServiceApi
-            .testRequestGet(app_source, isCustomizeRom, versionname)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new MyObserver<CheckRomBean>(dataCallback));
+ ApiFactory.getApiService(myAuthRetrofitFactory,TestServiceApi.class)
+                .testRequestGet(app_source, isCustomizeRom, versionname)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new MyObserver<CheckRomBean>(dataCallback));
 ```
 
-此方式通过自定义创建Retrofit工厂（AuthRetrofitFactory）来请求网络，更灵活（其实ApiFactory内部也是维护了一个Retrofit工厂）。
-同时，new Gson()的传入是可选的，如果此处传入，则优先采用此传入的gson实例；如果此处没有传入gson实例，则使用初始化中getGsonInstance()获取到的；如果都没有，则采用空实例(new Gson()）
+此方式通过自定义创建Retrofit工厂（AuthRetrofitFactory）来请求网络，更灵活。再此基础上，可以自定义某个网络请求的NetRequestConfigProvider。此处NetRequestConfigProvider的配置会优先于Application中的配置。
 
-同时Retrofit工厂也可以传入baseUrl来创建ApiInterface实例(直接覆盖初始化中的getBaseUrl())，如下：：
-
-```
-TestServiceApi testServiceApi = factory.create("http://123.445.666.777:8980/").create(TestServiceApi.class);
-```
-
-无论上述那种方式请求网络，都可以实现baseUrl的动态替换、公参加入等完整功能。
 
 
 ## 4、混淆

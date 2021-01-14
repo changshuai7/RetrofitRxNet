@@ -10,6 +10,4 @@ public interface IRetrofitCreator {
 
     Retrofit create();
 
-    Retrofit create(String baseUrl);
-
 }

@@ -3,6 +3,7 @@ package com.shuai.retrofitrx.net.client;
 import android.content.Context;
 
 import com.shuai.retrofitrx.config.NetConfig;
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
 import com.shuai.retrofitrx.constants.NetConstants;
 import com.shuai.retrofitrx.net.Interceptor.AuthParamsInterceptor;
 import com.shuai.retrofitrx.net.Interceptor.HttpLoggingInterceptor;
@@ -16,19 +17,23 @@ import okhttp3.OkHttpClient;
 
 
 public class AuthOkHttpClientBuilder extends AbstractOkHttpClientBuilder {
-    public static final int OKHTTP_CACHE_SIZE = 10 * 1024 * 1024;
-    public static final String OKHTTP_CACHE_FILE_NAME = "OKHttpCache";
+
+    public static final int OK_HTTP_CACHE_SIZE = 10 * 1024 * 1024;
+    public static final String OK_HTTP_CACHE_FILE_NAME = "OKHttpCache";
 
     private Context context;
-    private String baseUrl;
+    private NetRequestConfigProvider netRequestConfigProvider;
+
 
     public AuthOkHttpClientBuilder(Context context) {
         this.context = context;
+        this.netRequestConfigProvider = NetConfig.getConfig().getRequestConfigProvider();
     }
 
-    public AuthOkHttpClientBuilder(Context context, String baseUrl) {
+
+    public AuthOkHttpClientBuilder(Context context, NetRequestConfigProvider netRequestConfigProvider) {
         this.context = context;
-        this.baseUrl = baseUrl;
+        this.netRequestConfigProvider = netRequestConfigProvider;
     }
 
     @Override
@@ -42,12 +47,12 @@ public class AuthOkHttpClientBuilder extends AbstractOkHttpClientBuilder {
         /**
          * URL拦截解决多BaseURL的问题。
          */
-        builder.addInterceptor(new MoreBaseUrlInterceptor(baseUrl));
+        builder.addInterceptor(new MoreBaseUrlInterceptor(netRequestConfigProvider));
 
         /**
          * 增加默认的全局配置参数
          */
-        builder.addInterceptor(new AuthParamsInterceptor());
+        builder.addInterceptor(new AuthParamsInterceptor(netRequestConfigProvider));
 
         /**
          * 日志拦截器
@@ -64,7 +69,7 @@ public class AuthOkHttpClientBuilder extends AbstractOkHttpClientBuilder {
 
     @Override
     public void setCache(OkHttpClient.Builder builder) {
-        File cacheDirectory = new File(context.getExternalCacheDir(), OKHTTP_CACHE_FILE_NAME);
-        builder.cache(new Cache(cacheDirectory, OKHTTP_CACHE_SIZE));
+        File cacheDirectory = new File(context.getExternalCacheDir(), OK_HTTP_CACHE_FILE_NAME);
+        builder.cache(new Cache(cacheDirectory, OK_HTTP_CACHE_SIZE));
     }
 }
