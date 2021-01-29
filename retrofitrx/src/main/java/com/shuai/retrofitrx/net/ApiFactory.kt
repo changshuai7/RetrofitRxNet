@@ -1,107 +1,60 @@
-package com.shuai.retrofitrx.net;
+package com.shuai.retrofitrx.net
 
-import com.shuai.retrofitrx.config.NetConfig;
-import com.shuai.retrofitrx.net.retrofit.AuthRetrofitFactory;
-import com.shuai.retrofitrx.net.retrofit.IRetrofitCreator;
-import com.shuai.retrofitrx.utils.Logger;
-
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.shuai.retrofitrx.config.NetConfig
+import com.shuai.retrofitrx.net.retrofit.AuthRetrofitFactory
+import com.shuai.retrofitrx.net.retrofit.IRetrofitCreator
+import java.io.Serializable
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 获取网络请求的server实例
  *
- * @author changshuai
  */
+class ApiFactory {
 
-public class ApiFactory {
+    companion object {
 
-    private static final AuthRetrofitFactory authRetrofitFactory = new AuthRetrofitFactory(NetConfig.getApp());
+        private val authRetrofitFactory = AuthRetrofitFactory(NetConfig.app)
 
-    public static <T> T getApiService(Class<T> clazz) {
-        return getApiService(authRetrofitFactory, clazz);
-    }
+        @JvmStatic
+        fun <T> getApiService(clazz: Class<T>): T? {
+            return getApiService(authRetrofitFactory, clazz)
+        }
 
+        private val factoryClsContainer: MutableMap<Int, FactoryContainer> = ConcurrentHashMap()
 
-    private static final Map<Integer, FactoryContainer> factoryClsContainer = new ConcurrentHashMap<>();
-
-    /**
-     * 获取Retrofit的Api对象
-     *
-     * @param iRetrofitCreator Retrofit工厂(通过自定义IRetrofitCreator,可以外部传入NetRequestConfigProvider，灵活性会极其高)
-     * @param clazz            Api的class对象
-     * @param <T>              Api的实例
-     * @return
-     */
-    public synchronized static <T> T getApiService(IRetrofitCreator iRetrofitCreator, Class<T> clazz) {
-
-        try {
-            if (iRetrofitCreator != null) {
-
+        /**
+         * 获取Retrofit的Api对象
+         *
+         * @param iRetrofitCreator Retrofit工厂(通过自定义IRetrofitCreator,可以外部传入NetRequestConfigProvider，灵活性会极其高)
+         * @param clazz            Api的class对象
+         * @param <T>              Api的实例
+         * @return
+        </T> */
+        @Synchronized
+        @JvmStatic
+        fun <T> getApiService(iRetrofitCreator: IRetrofitCreator, clazz: Class<T>): T? {
+            try {
                 if (!factoryClsContainer.containsKey(iRetrofitCreator.hashCode())) {
+                    val apis: MutableMap<Class<*>, Any?> = ConcurrentHashMap()
+                    apis[clazz] = iRetrofitCreator.create()?.create(clazz)
+                    val factoryContainer = FactoryContainer(iRetrofitCreator, apis)
 
-                    FactoryContainer factoryContainer = new FactoryContainer();
-
-                    Map<Class<?>, Object> apis = new ConcurrentHashMap<>();
-                    apis.put(clazz, iRetrofitCreator.create().create(clazz));
-
-                    factoryContainer.setFactoryIns(iRetrofitCreator);
-                    factoryContainer.setApis(apis);
-
-                    factoryClsContainer.put(iRetrofitCreator.hashCode(), factoryContainer);
+                    factoryClsContainer[iRetrofitCreator.hashCode()] = factoryContainer
                 } else {
-
-                    FactoryContainer factoryContainer = factoryClsContainer.get(iRetrofitCreator.hashCode());
-                    if (!factoryContainer.getApis().containsKey(clazz)) {
-
-                        factoryContainer.getApis().put(clazz, factoryContainer.getFactoryIns().create().create(clazz));
+                    val factoryContainer = factoryClsContainer[iRetrofitCreator.hashCode()]
+                    if (!factoryContainer!!.apis.containsKey(clazz)) {
+                        factoryContainer.apis[clazz] = factoryContainer.factoryIns.create()?.create(clazz)
                     }
-
                 }
-                return (T) factoryClsContainer.get(iRetrofitCreator.hashCode()).getApis().get(clazz);
-
+                return factoryClsContainer[iRetrofitCreator.hashCode()]!!.apis[clazz] as? T?
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
-
-
-    static class FactoryContainer implements Serializable {
-        private IRetrofitCreator factoryIns;
-        private Map<Class<?>, Object> apis;
-
-        public FactoryContainer() {
+            return null
         }
 
-        public FactoryContainer(IRetrofitCreator factoryIns, Map<Class<?>, Object> apis) {
-            this.factoryIns = factoryIns;
-            this.apis = apis;
-        }
-
-        public IRetrofitCreator getFactoryIns() {
-            return factoryIns;
-        }
-
-        public void setFactoryIns(IRetrofitCreator factoryIns) {
-            this.factoryIns = factoryIns;
-        }
-
-        public Map<Class<?>, Object> getApis() {
-            return apis;
-        }
-
-        public void setApis(Map<Class<?>, Object> apis) {
-            this.apis = apis;
-        }
+        internal class FactoryContainer(var factoryIns: IRetrofitCreator, var apis: MutableMap<Class<*>, Any?>) : Serializable
     }
 
 

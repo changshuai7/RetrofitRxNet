@@ -1,62 +1,43 @@
-package com.shuai.retrofitrx.net.retrofit;
+package com.shuai.retrofitrx.net.retrofit
 
-import android.content.Context;
-
-import com.google.gson.Gson;
-import com.shuai.retrofitrx.config.NetConfig;
-import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+import android.content.Context
+import com.shuai.retrofitrx.config.NetConfig
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * @author changshuai
  */
-public abstract class AbstractRetrofitFactory implements IRetrofitCreator {
+abstract class AbstractRetrofitFactory : IRetrofitCreator {
 
-    private Context ctx;
-    private NetRequestConfigProvider netRequestConfigProvider;
+    var ctx: Context
+        private set
+    var netRequestConfigProvider: NetRequestConfigProvider?
+        private set
 
-    public Context getCtx() {
-        return ctx;
+    constructor(ctx: Context) {
+        this.ctx = ctx.applicationContext
+        netRequestConfigProvider = NetConfig.config.requestConfigProvider
     }
 
-    public NetRequestConfigProvider getNetRequestConfigProvider() {
-        return netRequestConfigProvider;
+    constructor(ctx: Context, netRequestConfigProvider: NetRequestConfigProvider?) {
+        this.ctx = ctx.applicationContext
+        this.netRequestConfigProvider = netRequestConfigProvider
     }
 
-    public AbstractRetrofitFactory(Context ctx) {
-        this.ctx = ctx.getApplicationContext();
-        this.netRequestConfigProvider = NetConfig.getConfig().getRequestConfigProvider();
-    }
-
-    public AbstractRetrofitFactory(Context ctx, NetRequestConfigProvider netRequestConfigProvider) {
-        this.ctx = ctx.getApplicationContext();
-        this.netRequestConfigProvider = netRequestConfigProvider;
-    }
-
-    public abstract OkHttpClient getClient();
-
-
-    @Override
-    public Retrofit create() {
-
+    abstract val client: OkHttpClient
+    override fun create(): Retrofit? {
         if (netRequestConfigProvider != null) {
-            Retrofit retrofit;
-
-            retrofit = new Retrofit.Builder()
-                    .client(getClient())
-                    .baseUrl(netRequestConfigProvider.getBaseUrl())
-                    .addConverterFactory(netRequestConfigProvider.getGsonInstance() == null ? GsonConverterFactory.create() : GsonConverterFactory.create(netRequestConfigProvider.getGsonInstance()))
+            return Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(netRequestConfigProvider!!.baseUrl)
+                    .addConverterFactory(if (netRequestConfigProvider!!.gsonInstance == null) GsonConverterFactory.create() else GsonConverterFactory.create(netRequestConfigProvider!!.gsonInstance))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .build();
-
-            return retrofit;
+                    .build()
         }
-        return null;
-
+        return null
     }
-
 }

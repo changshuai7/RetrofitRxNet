@@ -1,7 +1,5 @@
-package com.shuai.retrofitrx.net.client;
+package com.shuai.retrofitrx.net.client
 
-
-public interface IClientBuilder<T> {
-
-    T build();
+interface IClientBuilder<T> {
+    fun build(): T
 }

@@ -51,6 +51,8 @@ public class MyApplication extends Application {
     }
 
     private void initNet() {
+        NetConfig.init(this);
+        NetConfig.init(this);
         NetConfig.init(this)
                 .baseConfig(new NetBaseConfigProvider() {
 

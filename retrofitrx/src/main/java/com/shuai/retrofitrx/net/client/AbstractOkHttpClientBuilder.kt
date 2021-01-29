@@ -1,41 +1,39 @@
-package com.shuai.retrofitrx.net.client;
+package com.shuai.retrofitrx.net.client
 
-import com.shuai.retrofitrx.config.NetConfig;
+import com.shuai.retrofitrx.config.NetConfig
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
-import java.util.concurrent.TimeUnit;
+abstract class AbstractOkHttpClientBuilder : IClientBuilder<OkHttpClient> {
 
-import okhttp3.OkHttpClient;
-
-public abstract class AbstractOkHttpClientBuilder implements IClientBuilder<OkHttpClient> {
-    public static long TIMEOUT_DEBUG = 20;
-    public static long TIMEOUT_REAL = 15;
-
-    @Override
-    public OkHttpClient build() {
-        OkHttpClient.Builder builder = getOkHttpClientBuilder();
-        setRequestInterceptor(builder);
-        setCache(builder);
-        setTimeOut(builder);
-        return builder.build();
+    override fun build(): OkHttpClient {
+        val builder = okHttpClientBuilder
+        setRequestInterceptor(builder)
+        setCache(builder)
+        setTimeOut(builder)
+        return builder.build()
     }
 
-    public OkHttpClient.Builder getOkHttpClientBuilder() {
-        return new OkHttpClient().newBuilder();
-    }
+    open val okHttpClientBuilder: OkHttpClient.Builder
+        get() = OkHttpClient().newBuilder()
 
-    public abstract void setRequestInterceptor(OkHttpClient.Builder builder);
+    abstract fun setRequestInterceptor(builder: OkHttpClient.Builder)
+    abstract fun setCache(builder: OkHttpClient.Builder)
 
-    public abstract void setCache(OkHttpClient.Builder builder);
-
-    public void setTimeOut(OkHttpClient.Builder builder) {
-        if (NetConfig.getConfig().getBaseConfig().isDebug()) {
+    private fun setTimeOut(builder: OkHttpClient.Builder) {
+        if (NetConfig.config.baseConfigProvider.isDebug) {
             builder.connectTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS)
                     .readTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS)
-                    .writeTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS);
+                    .writeTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS)
         } else {
             builder.connectTimeout(TIMEOUT_REAL, TimeUnit.SECONDS)
                     .readTimeout(TIMEOUT_REAL, TimeUnit.SECONDS)
-                    .writeTimeout(TIMEOUT_REAL, TimeUnit.SECONDS);
+                    .writeTimeout(TIMEOUT_REAL, TimeUnit.SECONDS)
         }
+    }
+
+    companion object {
+        const val TIMEOUT_DEBUG: Long = 20
+        const val TIMEOUT_REAL: Long = 15
     }
 }

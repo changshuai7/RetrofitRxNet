@@ -1,16 +1,13 @@
-package com.shuai.retrofitrx.constants;
+package com.shuai.retrofitrx.constants
 
 /**
  * 常量配置
  */
-public class NetConstants {
+object NetConstants {
+    const val TAG = "RetrofitRxNet"
 
-    public static final String TAG = "RetrofitRxNet";
-
-    public static class HeaderKey {
-        public final static String DomainHost = "Domain-Host";
-        public final static String HeaderAuto = "Header-Auto";
+    object HeaderKey {
+        const val DomainHost = "Domain-Host"
+        const val HeaderAuto = "Header-Auto"
     }
-
-
 }

@@ -85,7 +85,7 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
     @Override
     public void onNext(BaseResponse<T> baseResponse) {
         if (baseResponse != null) {
-            if (NetConfig.getConfig().getBaseConfig().isDebug()) {
+            if (NetConfig.getConfig().getBaseConfigProvider().isDebug()) {
                 Log.i(TAG, baseResponse.getStatus() + baseResponse.getErrMsg());
             }
             if (baseResponse.isSuccess()) {// 成功

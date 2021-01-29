@@ -1,75 +1,64 @@
-package com.shuai.retrofitrx.net.client;
+package com.shuai.retrofitrx.net.client
 
-import android.content.Context;
+import android.content.Context
+import com.shuai.retrofitrx.config.NetConfig
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
+import com.shuai.retrofitrx.constants.NetConstants
+import com.shuai.retrofitrx.net.interceptor.AuthParamsInterceptor
+import com.shuai.retrofitrx.net.interceptor.HttpLoggingInterceptor
+import com.shuai.retrofitrx.net.interceptor.MoreBaseUrlInterceptor
+import okhttp3.Cache
+import okhttp3.OkHttpClient
+import java.io.File
+import java.util.logging.Level
 
-import com.shuai.retrofitrx.config.NetConfig;
-import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
-import com.shuai.retrofitrx.constants.NetConstants;
-import com.shuai.retrofitrx.net.Interceptor.AuthParamsInterceptor;
-import com.shuai.retrofitrx.net.Interceptor.HttpLoggingInterceptor;
-import com.shuai.retrofitrx.net.Interceptor.MoreBaseUrlInterceptor;
+class AuthOkHttpClientBuilder : AbstractOkHttpClientBuilder {
 
-import java.io.File;
-import java.util.logging.Level;
+    private val context: Context
+    private var netRequestConfigProvider: NetRequestConfigProvider?
 
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-
-
-public class AuthOkHttpClientBuilder extends AbstractOkHttpClientBuilder {
-
-    public static final int OK_HTTP_CACHE_SIZE = 10 * 1024 * 1024;
-    public static final String OK_HTTP_CACHE_FILE_NAME = "OKHttpCache";
-
-    private Context context;
-    private NetRequestConfigProvider netRequestConfigProvider;
-
-
-    public AuthOkHttpClientBuilder(Context context) {
-        this.context = context;
-        this.netRequestConfigProvider = NetConfig.getConfig().getRequestConfigProvider();
+    constructor(context: Context) {
+        this.context = context
+        //采用公共配置的NetRequestConfigProvider
+        netRequestConfigProvider = NetConfig.config.requestConfigProvider
     }
 
-
-    public AuthOkHttpClientBuilder(Context context, NetRequestConfigProvider netRequestConfigProvider) {
-        this.context = context;
-        this.netRequestConfigProvider = netRequestConfigProvider;
+    constructor(context: Context, netRequestConfigProvider: NetRequestConfigProvider?) {
+        this.context = context
+        //采用传入配置的NetRequestConfigProvider
+        this.netRequestConfigProvider = netRequestConfigProvider
     }
 
-    @Override
-    public OkHttpClient.Builder getOkHttpClientBuilder() {
-        return super.getOkHttpClientBuilder();
-    }
+    override val okHttpClientBuilder: OkHttpClient.Builder
+        get() = super.okHttpClientBuilder
 
-    @Override
-    public void setRequestInterceptor(OkHttpClient.Builder builder) {
-
+    override fun setRequestInterceptor(builder: OkHttpClient.Builder) {
         /**
          * URL拦截解决多BaseURL的问题。
          */
-        builder.addInterceptor(new MoreBaseUrlInterceptor(netRequestConfigProvider));
-
+        builder.addInterceptor(MoreBaseUrlInterceptor(netRequestConfigProvider))
         /**
          * 增加默认的全局配置参数
          */
-        builder.addInterceptor(new AuthParamsInterceptor(netRequestConfigProvider));
-
+        builder.addInterceptor(AuthParamsInterceptor(netRequestConfigProvider))
         /**
          * 日志拦截器
          */
-        HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(NetConstants.TAG);
+        val logInterceptor = HttpLoggingInterceptor(NetConstants.TAG)
         //log打印级别，决定了log显示的详细程度
-        logInterceptor.setPrintLevel(NetConfig.getConfig().getBaseConfig().isLogDebug() ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
+        logInterceptor.setPrintLevel(if (NetConfig.config.baseConfigProvider.isLogDebug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
         //log颜色级别，决定了log在控制台显示的颜色
-        logInterceptor.setColorLevel(Level.INFO);
-        builder.addInterceptor(logInterceptor);
-
-
+        logInterceptor.setColorLevel(Level.INFO)
+        builder.addInterceptor(logInterceptor)
     }
 
-    @Override
-    public void setCache(OkHttpClient.Builder builder) {
-        File cacheDirectory = new File(context.getExternalCacheDir(), OK_HTTP_CACHE_FILE_NAME);
-        builder.cache(new Cache(cacheDirectory, OK_HTTP_CACHE_SIZE));
+    override fun setCache(builder: OkHttpClient.Builder) {
+        val cacheDirectory = File(context.externalCacheDir, OK_HTTP_CACHE_FILE_NAME)
+        builder.cache(Cache(cacheDirectory, OK_HTTP_CACHE_SIZE.toLong()))
+    }
+
+    companion object {
+        const val OK_HTTP_CACHE_SIZE = 10 * 1024 * 1024
+        const val OK_HTTP_CACHE_FILE_NAME = "OKHttpCache"
     }
 }

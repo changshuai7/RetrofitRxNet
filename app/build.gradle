@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -56,6 +57,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation project(':retrofitrx')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 //    implementation 'com.shuai:retrofit-rx-net:0.0.1'
 
+}
+repositories {
+    mavenCentral()
 }

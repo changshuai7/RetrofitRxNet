@@ -1,101 +1,77 @@
-package com.shuai.retrofitrx.net.Interceptor;
+package com.shuai.retrofitrx.net.interceptor
 
-import com.shuai.retrofitrx.config.NetConfig;
-import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
-import com.shuai.retrofitrx.utils.Util;
+import com.shuai.retrofitrx.config.NetConfig
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
+import com.shuai.retrofitrx.utils.Util
+import okhttp3.FormBody
+import okhttp3.Interceptor
+import okhttp3.Response
+import java.io.IOException
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
+class AuthParamsInterceptor : Interceptor {
 
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.Response;
+    private var netRequestConfigProvider: NetRequestConfigProvider?
 
-
-public class AuthParamsInterceptor implements Interceptor {
-
-    private NetRequestConfigProvider netRequestConfigProvider;
-
-    public AuthParamsInterceptor(NetRequestConfigProvider netRequestConfigProvider) {
-        this.netRequestConfigProvider = netRequestConfigProvider;
+    constructor(netRequestConfigProvider: NetRequestConfigProvider?) {
+        this.netRequestConfigProvider = netRequestConfigProvider
     }
 
-    public AuthParamsInterceptor() {
-        this.netRequestConfigProvider = NetConfig.getConfig().getRequestConfigProvider();
+    constructor() {
+        netRequestConfigProvider = NetConfig.config.requestConfigProvider
     }
 
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        Request originRequest = chain.request();
+    @Throws(IOException::class)
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val originRequest = chain.request()
 
         // 添加公共参数
-        HttpUrl.Builder newUrlBuilder = originRequest.url().newBuilder();
-        Map<String, String> defaultParams = getDefaultUrlParams();
-        if (defaultParams != null && !defaultParams.isEmpty()) {
-            for (Map.Entry<String, String> param : defaultParams.entrySet()) {
-                newUrlBuilder.addQueryParameter(param.getKey(), param.getValue());
+        val newUrlBuilder = originRequest.url().newBuilder()
+        val defaultParams: Map<String, String> = defaultUrlParams
+        if (defaultParams.isNotEmpty()) {
+            for ((key, value) in defaultParams) {
+                newUrlBuilder.addQueryParameter(key, value)
             }
         }
 
         // 添加公共 Header
-        Request.Builder newRequestBuilder = originRequest.newBuilder()
-                .url(newUrlBuilder.build());
-        Map<String, String> defaultHeaders = getDefaultHeaders();
-        if (defaultHeaders != null && !defaultHeaders.isEmpty()) {
-            for (Map.Entry<String, String> entry : defaultHeaders.entrySet()) {
-                newRequestBuilder.addHeader(entry.getKey(), entry.getValue());
+        val newRequestBuilder = originRequest.newBuilder().url(newUrlBuilder.build())
+        val defaultHeaders: Map<String, String> = defaultHeaders
+        if (defaultHeaders.isNotEmpty()) {
+            for ((key, value) in defaultHeaders) {
+                newRequestBuilder.addHeader(key, value)
             }
         }
 
-
         // Post 请求添加统一Body
-        if ("POST".equalsIgnoreCase(originRequest.method())) {
-            if (originRequest.body() instanceof FormBody) {
-                Map<String, String> defaultBodyParams = getDefaultBodyParams();
-                if (!Util.MapIsEmpty(defaultBodyParams)) {
-                    FormBody.Builder newFormBody = new FormBody.Builder();
-                    FormBody oldFormBody = (FormBody) originRequest.body();
+        if ("POST".equals(originRequest.method(), ignoreCase = true)) {
+            if (originRequest.body() is FormBody) {
+                val defaultBodyParams: Map<String, String> = defaultBodyParams
+                if (!Util.mapIsEmpty(defaultBodyParams)) {
+                    val newFormBody = FormBody.Builder()
+                    val oldFormBody = originRequest.body() as FormBody?
                     if (oldFormBody != null && oldFormBody.size() > 0) {
-                        for (int i = 0; i < oldFormBody.size(); i++) {
-                            newFormBody.addEncoded(oldFormBody.encodedName(i), oldFormBody.encodedValue(i));
+                        for (i in 0 until oldFormBody.size()) {
+                            newFormBody.addEncoded(oldFormBody.encodedName(i), oldFormBody.encodedValue(i))
                         }
                     }
-                    for (Map.Entry<String, String> entry : defaultBodyParams.entrySet()) {
-                        if (entry != null && entry.getKey() != null && entry.getValue() != null) {
-                            newFormBody.add(entry.getKey(), entry.getValue());
-                        }
+                    for (entry in defaultBodyParams.entries) {
+                        newFormBody.add(entry.key, entry.value)
                     }
-                    newRequestBuilder.method(originRequest.method(), newFormBody.build());
+                    newRequestBuilder.method(originRequest.method(), newFormBody.build())
                 }
             }
         }
-
-        Request newRequest = newRequestBuilder.build();
-        return chain.proceed(newRequest);
+        val newRequest = newRequestBuilder.build()
+        return chain.proceed(newRequest)
     }
 
-    private Map getDefaultUrlParams() {
-        if (netRequestConfigProvider != null) {
-            return netRequestConfigProvider.getParamsMap();
-        }
-        return Collections.EMPTY_MAP;
-    }
+    private val defaultUrlParams: Map<String, String>
+        get() = if (netRequestConfigProvider != null) netRequestConfigProvider!!.paramsMap else emptyMap()
 
-    private Map getDefaultHeaders() {
-        if (netRequestConfigProvider != null) {
-            return netRequestConfigProvider.getHeaderMap();
-        }
-        return Collections.EMPTY_MAP;
-    }
+    private val defaultHeaders: Map<String, String>
+        get() = if (netRequestConfigProvider != null) netRequestConfigProvider!!.headerMap else emptyMap()
 
-    private Map getDefaultBodyParams() {
-        if (netRequestConfigProvider != null) {
-            return netRequestConfigProvider.getBodyMap();
-        }
-        return Collections.EMPTY_MAP;
-    }
+    private val defaultBodyParams: Map<String, String>
+        get() = if (netRequestConfigProvider != null) netRequestConfigProvider!!.bodyMap else emptyMap()
 
 }
