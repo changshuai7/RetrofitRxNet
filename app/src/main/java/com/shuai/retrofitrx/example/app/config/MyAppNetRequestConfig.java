@@ -5,6 +5,8 @@ import com.shuai.csnet.example.app.BuildConfig;
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
 import com.shuai.retrofitrx.example.app.constants.MyConstants;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +19,9 @@ import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddressDe
  */
 public class MyAppNetRequestConfig extends NetRequestConfigProvider {
 
+    @NotNull
     @Override
-    public Map getHeaderMap() {
+    public Map<String,String> getHeaderMap() {
         HashMap<String, String> map = new HashMap<>();
         map.put(MyConstants.HeaderKey.HEADER_1, "header1-----my");
         map.put(MyConstants.HeaderKey.HEADER_2, "header2-----my");
@@ -27,8 +30,9 @@ public class MyAppNetRequestConfig extends NetRequestConfigProvider {
     }
 
 
+    @NotNull
     @Override
-    public Map getParamsMap() {
+    public Map<String,String> getParamsMap() {
         HashMap<String, String> map = new HashMap<>();
         map.put(MyConstants.ParamsKey.PARAMS_1, "tom-----my");
         map.put(MyConstants.ParamsKey.PARAMS_2, "jake-----my");
@@ -37,19 +41,22 @@ public class MyAppNetRequestConfig extends NetRequestConfigProvider {
     }
 
 
+    @NotNull
     @Override
-    public Map getBodyMap() {
+    public Map<String,String> getBodyMap() {
         //code...
         return null;
     }
 
 
+    @NotNull
     @Override
     public String getBaseUrl() {
         // 建议baseUrl以斜杠结尾，避免Retrofit报错
         return BuildConfig.DEBUG ? ServerAddressDefault[0] : ServerAddressDefault[1];
     }
 
+    @NotNull
     @Override
     public Map<String, String> getBaseUrls() {
         HashMap<String, String> map = new HashMap<>();

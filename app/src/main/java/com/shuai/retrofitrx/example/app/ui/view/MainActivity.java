@@ -7,8 +7,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.shuai.csnet.example.app.R;
-import com.shuai.retrofitrx.example.app.provider.DataProviderManager;
 import com.shuai.retrofitrx.example.app.provider.net.core.HttpInterface;
+import com.shuai.retrofitrx.example.app.provider.net.model.NetProvider;
 import com.shuai.retrofitrx.example.app.ui.bean.CheckRomBean;
 
 
@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void requestGet() {
-        DataProviderManager.getProvider().getNetProvider()
-                .requestCheckRom("salesorder", false, "v2.6.2.1102-debug",
+        NetProvider.getInstance().requestCheckRom("salesorder", false, "v2.6.2.1102-debug",
                         new HttpInterface.DataCallback<CheckRomBean>(null) {
 
                             @Override

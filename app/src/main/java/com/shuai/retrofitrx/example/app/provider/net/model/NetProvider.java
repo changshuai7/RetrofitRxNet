@@ -23,8 +23,21 @@ import io.reactivex.schedulers.Schedulers;
 public class NetProvider implements INetProvider {
 
 
-    public static AuthRetrofitFactory myAuthRetrofitFactory
-            = new AuthRetrofitFactory(MyApplication.getInstance(),new MyAppNetRequestConfig());
+    private static NetProvider mInstance;
+    private AuthRetrofitFactory myAuthRetrofitFactory;
+
+
+    public NetProvider() {
+        myAuthRetrofitFactory = new AuthRetrofitFactory(MyApplication.getInstance(), new MyAppNetRequestConfig());
+    }
+
+    public static NetProvider getInstance() {
+        if (mInstance == null) {
+            mInstance = new NetProvider();
+        }
+        return mInstance;
+    }
+
 
     /**
      * Test请求
