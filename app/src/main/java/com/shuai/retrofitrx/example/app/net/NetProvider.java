@@ -1,11 +1,10 @@
-package com.shuai.retrofitrx.example.app.provider.net.model;
+package com.shuai.retrofitrx.example.app.net;
 
 import com.shuai.retrofitrx.example.app.MyApplication;
 import com.shuai.retrofitrx.example.app.api.interfaceapi.TestServiceApi;
 import com.shuai.retrofitrx.example.app.config.MyAppNetRequestConfig;
-import com.shuai.retrofitrx.example.app.provider.net.INetProvider;
-import com.shuai.retrofitrx.example.app.provider.net.core.HttpInterface;
-import com.shuai.retrofitrx.example.app.provider.net.core.observer.MyObserver;
+import com.shuai.retrofitrx.example.app.net.core.AppDataCallback;
+import com.shuai.retrofitrx.example.app.net.core.AppObserver;
 import com.shuai.retrofitrx.example.app.ui.bean.CheckRomBean;
 import com.shuai.retrofitrx.net.ApiFactory;
 import com.shuai.retrofitrx.net.retrofit.AuthRetrofitFactory;
@@ -20,7 +19,7 @@ import io.reactivex.schedulers.Schedulers;
  * @author changshuai
  */
 
-public class NetProvider implements INetProvider {
+public class NetProvider  {
 
 
     private static NetProvider mInstance;
@@ -44,8 +43,8 @@ public class NetProvider implements INetProvider {
      *
      * @param dataCallback
      */
-    @Override
-    public void requestCheckRom(String app_source, boolean isCustomizeRom, String versionname, HttpInterface.DataCallback dataCallback) {
+
+    public void requestCheckRom(String app_source, boolean isCustomizeRom, String versionname, AppDataCallback dataCallback) {
 
         ////////////////////   默认使用Application中配置的AuthRetrofitFactory来请求网络  ////////////////////
 
@@ -53,7 +52,7 @@ public class NetProvider implements INetProvider {
                 .testRequestGet(app_source, isCustomizeRom, versionname)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MyObserver<CheckRomBean>(dataCallback));
+                .subscribe(new AppObserver<CheckRomBean>(dataCallback));
 
 
         ////////////////////   使用自定义配置的配置的AuthRetrofitFactory来请求网络  ////////////////////

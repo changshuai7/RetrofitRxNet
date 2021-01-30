@@ -1,4 +1,4 @@
-package com.shuai.retrofitrx.example.app.provider.net.core.error;
+package com.shuai.retrofitrx.example.app.net.core;
 
 
 import com.shuai.retrofitrx.example.app.MyApplication;

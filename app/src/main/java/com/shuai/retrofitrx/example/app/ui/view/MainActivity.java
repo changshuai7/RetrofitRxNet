@@ -7,8 +7,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.shuai.csnet.example.app.R;
-import com.shuai.retrofitrx.example.app.provider.net.core.HttpInterface;
-import com.shuai.retrofitrx.example.app.provider.net.model.NetProvider;
+import com.shuai.retrofitrx.example.app.net.core.AppDataCallback;
+import com.shuai.retrofitrx.example.app.net.NetProvider;
 import com.shuai.retrofitrx.example.app.ui.bean.CheckRomBean;
 
 
@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btn;
     private TextView tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,24 +35,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void requestGet() {
         NetProvider.getInstance().requestCheckRom("salesorder", false, "v2.6.2.1102-debug",
-                        new HttpInterface.DataCallback<CheckRomBean>(null) {
+                new AppDataCallback<CheckRomBean>() {
 
-                            @Override
-                            public void onSuccess(final CheckRomBean data) {
-                                tv.setText("请求结果："+data.toString());
-                            }
+                    @Override
+                    public void onSuccess(final CheckRomBean data) {
+                        tv.setText("请求结果：" + data.toString());
+                    }
 
-                            @Override
-                            public void onError(int errorCode, String errorMsg, Throwable throwable) {
-                                tv.setText("请求错误："+"code = "+errorCode+",errorMsg = "+errorMsg);
+                    @Override
+                    public void onError(int errorCode, String errorMsg, Throwable throwable) {
+                        tv.setText("请求错误：" + "code = " + errorCode + ",errorMsg = " + errorMsg);
 
-                            }
+                    }
 
-                            @Override
-                            public void onFinally() {
+                    @Override
+                    public void onFinally() {
 
-                            }
-                        });
+                    }
+                }.setDisposable(null));
     }
 
 

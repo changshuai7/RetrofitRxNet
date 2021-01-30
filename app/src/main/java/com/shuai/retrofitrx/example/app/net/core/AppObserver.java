@@ -1,10 +1,8 @@
-package com.shuai.retrofitrx.example.app.provider.net.core.observer;
+package com.shuai.retrofitrx.example.app.net.core;
 
 import android.widget.Toast;
 
 import com.shuai.retrofitrx.example.app.MyApplication;
-import com.shuai.retrofitrx.example.app.provider.net.core.HttpInterface;
-import com.shuai.retrofitrx.example.app.provider.net.core.bean.BaseResponse;
 import com.shuai.retrofitrx.utils.Util;
 
 
@@ -14,15 +12,11 @@ import com.shuai.retrofitrx.utils.Util;
  * @author changshuai
  */
 
-public class MyObserver<T> extends BaseObserver<T> {
+public class AppObserver<T> extends BaseObserver<T> {
 
-    private HttpInterface.DataCallback dataCallback;
+    private final AppDataCallback<T> dataCallback;
 
-    public HttpInterface.DataCallback getDataCallback() {
-        return dataCallback;
-    }
-
-    public MyObserver(HttpInterface.DataCallback dataCallback) {
+    public AppObserver(AppDataCallback<T> dataCallback) {
         super(MyApplication.getInstance());
         this.dataCallback = dataCallback;
     }
@@ -30,7 +24,6 @@ public class MyObserver<T> extends BaseObserver<T> {
     @Override
     public void handleError(final int i, final String s, Throwable throwable) {
 
-        // TODO :这里考虑一下异步线程Toast可能会引发的异常。
         if (!Util.isStrNullOrEmpty(s)) {
             Toast.makeText(MyApplication.getInstance(), s + "(" + i + ")", Toast.LENGTH_SHORT).show();
         } else if (i != 0) {
@@ -45,7 +38,7 @@ public class MyObserver<T> extends BaseObserver<T> {
     }
 
     @Override
-    public void onFinally() {
+    public void handleFinally() {
         dataCallback.onFinally();
     }
 }

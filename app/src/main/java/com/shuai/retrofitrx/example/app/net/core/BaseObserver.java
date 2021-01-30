@@ -1,16 +1,13 @@
-package com.shuai.retrofitrx.example.app.provider.net.core.observer;
+package com.shuai.retrofitrx.example.app.net.core;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 
 import com.shuai.csnet.example.app.R;
 import com.shuai.retrofitrx.config.NetConfig;
 import com.shuai.retrofitrx.example.app.constants.MyConstants;
-import com.shuai.retrofitrx.example.app.provider.net.core.bean.BaseResponse;
-import com.shuai.retrofitrx.example.app.provider.net.core.error.MyErrorInfoConstant;
 import com.shuai.retrofitrx.net.exception.RequestException;
 
 import org.json.JSONException;
@@ -60,19 +57,20 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
     public abstract void handleData(BaseResponse<T> response);
 
     // 无论正常还是异常返回，都会走到这里
-    public abstract void onFinally();
+    public abstract void handleFinally();
 
 
     // onComplete 调用之后再调用onNext或者onError都不会生效
     @Override
     public void onComplete() {
-        onFinally();
+        handleFinally();
     }
 
     @Override
     public void onError(Throwable e) {
         parseError(e);
-        onFinally();
+        e.printStackTrace();
+        handleFinally();
     }
 
     @Override
@@ -85,13 +83,10 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
     @Override
     public void onNext(BaseResponse<T> baseResponse) {
         if (baseResponse != null) {
-            if (NetConfig.getConfig().getBaseConfigProvider().isDebug()) {
-                Log.i(TAG, baseResponse.getStatus() + baseResponse.getErrMsg());
-            }
             if (baseResponse.isSuccess()) {// 成功
                 handleData(baseResponse);
             } else if (baseResponse.getStatus() == MyErrorInfoConstant.CODE_LOGIN_EXPIRED) { //登陆过期
-                logout();
+                handleLogout();
             } else { //其他错误
                 int errorCode = baseResponse.getStatus();
                 String errMsg = !TextUtils.isEmpty(baseResponse.getErrMsg()) ? baseResponse.getErrMsg() : MyErrorInfoConstant.MESSAGE_EXCEPTION;
@@ -155,7 +150,7 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
             JSONObject jsonObject = new JSONObject(response);
             int status = jsonObject.getInt(MyConstants.CommonKey.STATUS);
             if (status == MyErrorInfoConstant.CODE_LOGIN_EXPIRED) {
-                logout();
+                handleLogout();
                 return true;
             }
             return false;
@@ -171,7 +166,7 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
         }
     }
 
-    protected static void logout() {
+    protected static void handleLogout() {
 
         // TODO :登录过期的方法
 

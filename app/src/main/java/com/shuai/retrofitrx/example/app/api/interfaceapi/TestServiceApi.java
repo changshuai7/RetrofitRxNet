@@ -4,7 +4,7 @@ package com.shuai.retrofitrx.example.app.api.interfaceapi;
 
 import com.shuai.retrofitrx.example.app.api.ServerField;
 import com.shuai.retrofitrx.example.app.constants.MyConstants;
-import com.shuai.retrofitrx.example.app.provider.net.core.bean.BaseResponse;
+import com.shuai.retrofitrx.example.app.net.core.BaseResponse;
 import com.shuai.retrofitrx.example.app.ui.bean.CheckRomBean;
 
 import io.reactivex.Observable;

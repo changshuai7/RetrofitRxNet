@@ -10,6 +10,8 @@ import com.shuai.retrofitrx.config.NetConfig;
 import com.shuai.retrofitrx.config.provider.NetBaseConfigProvider;
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,8 +53,6 @@ public class MyApplication extends Application {
     }
 
     private void initNet() {
-        NetConfig.init(this);
-        NetConfig.init(this);
         NetConfig.init(this)
                 .baseConfig(new NetBaseConfigProvider() {
 
@@ -80,8 +80,9 @@ public class MyApplication extends Application {
                     /**
                      * 配置默认Auth：公共请求header。（可选）
                      */
+                    @NotNull
                     @Override
-                    public Map getHeaderMap() {
+                    public Map<String, String> getHeaderMap() {
                         HashMap<String, String> map = new HashMap<>();
                         map.put(MyConstants.HeaderKey.HEADER_1, "header1");
                         map.put(MyConstants.HeaderKey.HEADER_2, "header2");
@@ -92,8 +93,9 @@ public class MyApplication extends Application {
                     /**
                      * 配置默认Auth：公共get/post请求的url拼接参数。（可选）
                      */
+                    @NotNull
                     @Override
-                    public Map getParamsMap() {
+                    public Map<String, String> getParamsMap() {
                         HashMap<String, String> map = new HashMap<>();
                         map.put(MyConstants.ParamsKey.PARAMS_1, "tom");
                         map.put(MyConstants.ParamsKey.PARAMS_2, "jake");
@@ -104,8 +106,9 @@ public class MyApplication extends Application {
                     /**
                      * 配置默认Auth：公共post请求的通用参数。（可选）
                      */
+                    @NotNull
                     @Override
-                    public Map getBodyMap() {
+                    public Map<String, String> getBodyMap() {
                         //code...
                         return null;
                     }
@@ -114,6 +117,7 @@ public class MyApplication extends Application {
                     /**
                      * 配置通用Auth默认baseUrl的domain
                      */
+                    @NotNull
                     @Override
                     public String getBaseUrl() {
                         // 建议baseUrl以斜杠结尾，避免Retrofit报错
@@ -124,6 +128,7 @@ public class MyApplication extends Application {
                      * 可传入多个BaseUrl，通过制定Header中Domain-Host字段来区分。（可选）
                      * @return
                      */
+                    @NotNull
                     @Override
                     public Map<String, String> getBaseUrls() {
                         HashMap<String, String> map = new HashMap<>();
