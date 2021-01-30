@@ -53,8 +53,9 @@ dependencies {
                 /**
                  * 配置默认Auth：公共请求header。（可选）
                  */
+                @NotNull
                 @Override
-                public Map getHeaderMap() {
+                public Map<String, String> getHeaderMap() {
                     HashMap<String, String> map = new HashMap<>();
                     map.put(MyConstants.HeaderKey.HEADER_1, "header1");
                     map.put(MyConstants.HeaderKey.HEADER_2, "header2");
@@ -65,8 +66,9 @@ dependencies {
                 /**
                  * 配置默认Auth：公共get/post请求的url拼接参数。（可选）
                  */
+                @NotNull
                 @Override
-                public Map getParamsMap() {
+                public Map<String, String> getParamsMap() {
                     HashMap<String, String> map = new HashMap<>();
                     map.put(MyConstants.ParamsKey.PARAMS_1, "tom");
                     map.put(MyConstants.ParamsKey.PARAMS_2, "jake");
@@ -77,15 +79,17 @@ dependencies {
                  /**
                  * 配置默认Auth：公共post请求的通用参数。（可选）
                  */
+                @NotNull
                 @Override
-                public Map getBodyMap() {
+                public Map<String, String> getBodyMap() {
                     //code...
-                    return null;
+                    return super.getBodyMap();
                 }
 
                 /**
                  * 配置通用Auth默认baseUrl的domain
                  */
+                @NotNull
                 @Override
                 public String getBaseUrl() {
                     // 建议baseUrl以斜杠结尾，避免Retrofit报错
@@ -96,6 +100,7 @@ dependencies {
                  * 可传入多个BaseUrl，通过制定Header中Domain-Host字段来区分。（可选）
                  * @return
                  */
+                @NotNull
                 @Override
                 public Map<String, String> getBaseUrls() {
                     HashMap<String, String> map = new HashMap<>();
@@ -138,11 +143,14 @@ dependencies {
 
 #### 3.1创建InterfaceApi。
 ```
-public interface TestServiceApi {
+public interface JavaTestInterface {
 
-    @Headers({"Domain-Host:" + "url1"})// 加上 Domain-Host header
-    @GET(sales/v1/test/)
-    Observable<BaseResponse<CheckRomBean>> testRequestGet(@Query("app_source") String app_source, @Query("isCustomizeRom") boolean isCustomizeRom, @Query("versionname") String versionname);
+    @Headers({NetConstants.HeaderKey.DomainHost + ":" + AppConstants.ServerDomainKey.URL1})
+    @GET(ServerField.TEST_CHECK_ROM)
+    Observable<BaseResponse<TestBean>> testRequestGet(
+            @Query("app_source") String appSource,
+            @Query("isCustomizeRom") boolean isCustomizeRom,
+            @Query("versionname") String versionName);
 
 }
 ```
@@ -163,11 +171,11 @@ public interface TestServiceApi {
 
 ##### 1、简易请求方式：
 ```
-ApiFactory.getApiService(TestServiceApi.class)
+ApiFactory.getApiService(JavaTestInterface.class)
                 .testRequestGet(app_source, isCustomizeRom, versionname)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MyObserver<CheckRomBean>(dataCallback));
+                .subscribe(new AppObserver<TestBean>(dataCallback));
 ```
 简易请求方式采用了默认的配置。需要注意的是，此方法内部创建Retrofit工厂时，传入的gson实例采用了项目在初始化中getGsonInstance()获取到的实例（如果初始化时没有初始化getGsonInstance()，则采用空实例(new Gson()）,Observer需根据业务需求自行创建。
 
@@ -180,54 +188,11 @@ public static AuthRetrofitFactory myAuthRetrofitFactory
                 .testRequestGet(app_source, isCustomizeRom, versionname)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MyObserver<CheckRomBean>(dataCallback));
+                .subscribe(new AppObserver<TestBean>(dataCallback));
 ```
 
 此方式通过自定义创建Retrofit工厂（AuthRetrofitFactory）来请求网络，更灵活。再此基础上，可以自定义某个网络请求的NetRequestConfigProvider。此处NetRequestConfigProvider的配置会优先于Application中的配置。
 
-
-
-## 4、混淆
-```
--keepattributes EnclosingMethod
-
--dontwarn javax.annotation.**
--dontwarn javax.inject.**
-
-# OkHttp3
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
--dontwarn okio.**
-
-# Retrofit
--dontwarn retrofit2.**
--keep class retrofit2.** { *; }
--keepattributes Signature
--keepattributes Exceptions
-
-# RxJava RxAndroid
--dontwarn sun.misc.**
--keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
-    long producerIndex;
-    long consumerIndex;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode producerNode;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode consumerNode;
-}
-
-# Gson
--keep class com.google.gson.stream.** { *; }
--keepattributes EnclosingMethod
-#-keep class org.xz_sale.entity.**{*;}//这是你定义的实体类
-
-# 不混淆实体类
--keep public class * implements java.io.Serializable {*;}
--keep public class * implements android.os.Parcelable {*;}
-```
 
 ## 5、写在后面
 针对有些业务，网络请求地址可能出现极其繁多复杂，难于管理的情况，baseUrl动态替换的方案可能略显逊色。我们建议你可以通过全路径传入url地址来请求网络。
