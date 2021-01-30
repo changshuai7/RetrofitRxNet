@@ -1,30 +1,14 @@
-package com.shuai.retrofitrx.example.app.ui.bean;
+package com.shuai.retrofitrx.example.app.ui.bean
 
-import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
+import java.io.Serializable
 
 /**
- @author changshuai
+ * @author changshuai
  */
-
-public class CheckRomBean implements Serializable {
-
-    @SerializedName("result")
-    private String result;
-
-    public String getResult() {
-        return result;
+class CheckRomBean : Serializable {
+    var result: String = ""
+    override fun toString(): String {
+        return "CheckRomBean(result='$result')"
     }
 
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    @Override
-    public String toString() {
-        return "CheckRomBean{" +
-                "result='" + result + '\'' +
-                '}';
-    }
 }

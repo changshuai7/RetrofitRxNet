@@ -1,28 +1,25 @@
-package com.shuai.retrofitrx.example.app.net.core;
+package com.shuai.retrofitrx.example.app.net.core
 
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * MVP-回调接口
  * Model->Presenter回调接口
  *
  */
-public abstract class AppDataCallback<T> {
+abstract class AppDataCallback<T> {
 
-    private CompositeDisposable disposable;//用户控制RxJava对网络请求的取消订阅
+    //用户控制RxJava对网络请求的取消订阅
+    var disposable: CompositeDisposable? = null
+        private set
 
-    public CompositeDisposable getDisposable() {
-        return disposable;
+    fun setDisposable(disposable: CompositeDisposable?): AppDataCallback<T> {
+        this.disposable = disposable
+        return this
     }
 
-    public AppDataCallback<T> setDisposable(CompositeDisposable disposable) {
-        this.disposable = disposable;
-        return this;
-    }
+    abstract fun onSuccess(data: T?)
+    abstract fun onError(errorCode: Int, errorMsg: String?, throwable: Throwable)
+    abstract fun onFinally()
 
-    public abstract void onSuccess(T data);
-
-    public abstract void onError(int errorCode, String errorMsg, Throwable throwable);
-
-    public abstract void onFinally();
 }

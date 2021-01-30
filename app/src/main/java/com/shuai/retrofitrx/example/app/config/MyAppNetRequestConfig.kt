@@ -1,73 +1,48 @@
-package com.shuai.retrofitrx.example.app.config;
+package com.shuai.retrofitrx.example.app.config
 
-import com.google.gson.Gson;
-import com.shuai.csnet.example.app.BuildConfig;
-import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
-import com.shuai.retrofitrx.example.app.constants.MyConstants;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddress1;
-import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddress2;
-import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddressDefault;
+import com.google.gson.Gson
+import com.shuai.csnet.example.app.BuildConfig
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
+import com.shuai.retrofitrx.example.app.api.ServerAddress
+import com.shuai.retrofitrx.example.app.constants.MyConstants
+import com.shuai.retrofitrx.example.app.constants.MyConstants.ParamsKey
+import com.shuai.retrofitrx.example.app.constants.MyConstants.ServerDomainKey
+import java.util.*
 
 /**
  * 自定义NetRequestConfigProvider
  */
-public class MyAppNetRequestConfig extends NetRequestConfigProvider {
+class MyAppNetRequestConfig : NetRequestConfigProvider() {
+    override val headerMap: Map<String, String>
+        get() {
+            val map = HashMap<String, String>()
+            map[MyConstants.HeaderKey.HEADER_1] = "header1-----my"
+            map[MyConstants.HeaderKey.HEADER_2] = "header2-----my"
+            return map
+        }
+    override val paramsMap: Map<String, String>
+        get() {
+            val map = HashMap<String, String>()
+            map[ParamsKey.PARAMS_1] = "tom-----my"
+            map[ParamsKey.PARAMS_2] = "jake-----my"
+            return map
+        }
 
-    @NotNull
-    @Override
-    public Map<String,String> getHeaderMap() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(MyConstants.HeaderKey.HEADER_1, "header1-----my");
-        map.put(MyConstants.HeaderKey.HEADER_2, "header2-----my");
+    //code...
+    override val bodyMap: Map<String, String>
+        get() = super.bodyMap
 
-        return map;
-    }
+    // 建议baseUrl以斜杠结尾，避免Retrofit报错
+    override val baseUrl: String
+        get() = if (BuildConfig.DEBUG) ServerAddress.ServerAddressDefault[0] else ServerAddress.ServerAddressDefault[1]
 
-
-    @NotNull
-    @Override
-    public Map<String,String> getParamsMap() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(MyConstants.ParamsKey.PARAMS_1, "tom-----my");
-        map.put(MyConstants.ParamsKey.PARAMS_2, "jake-----my");
-
-        return map;
-    }
-
-
-    @NotNull
-    @Override
-    public Map<String,String> getBodyMap() {
-        //code...
-        return null;
-    }
-
-
-    @NotNull
-    @Override
-    public String getBaseUrl() {
-        // 建议baseUrl以斜杠结尾，避免Retrofit报错
-        return BuildConfig.DEBUG ? ServerAddressDefault[0] : ServerAddressDefault[1];
-    }
-
-    @NotNull
-    @Override
-    public Map<String, String> getBaseUrls() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(MyConstants.ServerDomainKey.URL1, BuildConfig.DEBUG ? ServerAddress1[0] : ServerAddress1[1]);
-        map.put(MyConstants.ServerDomainKey.URL2, BuildConfig.DEBUG ? ServerAddress2[0] : ServerAddress2[1]);
-
-        return map;
-    }
-
-    @Override
-    public Gson getGsonInstance() {
-        return null;
-    }
+    override val baseUrls: Map<String, String>
+        get() {
+            val map = HashMap<String, String>()
+            map[ServerDomainKey.URL1] = if (BuildConfig.DEBUG) ServerAddress.ServerAddress1[0] else ServerAddress.ServerAddress1[1]
+            map[ServerDomainKey.URL2] = if (BuildConfig.DEBUG) ServerAddress.ServerAddress2[0] else ServerAddress.ServerAddress2[1]
+            return map
+        }
+    override val gsonInstance: Gson?
+        get() = null
 }

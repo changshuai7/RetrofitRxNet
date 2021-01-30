@@ -1,152 +1,106 @@
-package com.shuai.retrofitrx.example.app;
+package com.shuai.retrofitrx.example.app
 
-import android.app.Application;
-import android.os.Handler;
+import android.app.Application
+import android.os.Handler
+import android.os.Process
+import com.google.gson.Gson
+import com.shuai.csnet.example.app.BuildConfig
+import com.shuai.retrofitrx.config.NetConfig
+import com.shuai.retrofitrx.config.provider.NetBaseConfigProvider
+import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
+import com.shuai.retrofitrx.example.app.api.ServerAddress
+import com.shuai.retrofitrx.example.app.constants.MyConstants
+import com.shuai.retrofitrx.example.app.constants.MyConstants.ParamsKey
+import com.shuai.retrofitrx.example.app.constants.MyConstants.ServerDomainKey
+import java.util.*
 
-import com.shuai.csnet.example.app.BuildConfig;
-import com.shuai.retrofitrx.example.app.constants.MyConstants;
-import com.google.gson.Gson;
-import com.shuai.retrofitrx.config.NetConfig;
-import com.shuai.retrofitrx.config.provider.NetBaseConfigProvider;
-import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider;
+class MyApplication : Application() {
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddress1;
-import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddress2;
-import static com.shuai.retrofitrx.example.app.api.ServerAddress.ServerAddressDefault;
-
-
-public class MyApplication extends Application {
-
-    private static MyApplication sInstance;//单例
-    private static int mainTid;//主线程ID
-    private static Handler baseHandler;//全局Handler
-
-
-    //获取单例对象
-    public static MyApplication getInstance() {
-        return sInstance;
-    }
-
-    //获取主线程id
-    public static int getMainTid() {
-        return mainTid;
-    }
-
-    //获取Handler
-    public static Handler getHandler() {
-        return baseHandler;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        sInstance = this;
-        mainTid = android.os.Process.myTid();
-        baseHandler = new Handler();
-        initNet();
+    companion object {
+        //获取单例对象  //单例
+        lateinit var instance: MyApplication
+            private set
 
     }
 
-    private void initNet() {
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+        initNet()
+    }
+
+    private fun initNet() {
         NetConfig.init(this)
-                .baseConfig(new NetBaseConfigProvider() {
-
+                .baseConfig(object : NetBaseConfigProvider() {
                     /**
                      * 配置库的debug状态
                      * 影响debug调试域名，请求日志输出，以及可能影响普通的log日志输出
                      */
-                    @Override
-                    public boolean isDebug() {
-                        return BuildConfig.DEBUG;
-                    }
+                    override val isDebug: Boolean
+                        get() = BuildConfig.DEBUG
 
                     /**
                      * 配置库的log输出状态
-                     * 如果没有配置，随 {@link #isDebug()}状态走
+                     * 如果没有配置，随 [.isDebug]状态走
                      */
-                    @Override
-                    public boolean isLogDebug() {
-                        return super.isLogDebug();
-                    }
-
+                    override val isLogDebug: Boolean
+                        get() = super.isLogDebug
                 })
-                .requestConfig(new NetRequestConfigProvider() {
-
+                .requestConfig(object : NetRequestConfigProvider() {
                     /**
                      * 配置默认Auth：公共请求header。（可选）
                      */
-                    @NotNull
-                    @Override
-                    public Map<String, String> getHeaderMap() {
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(MyConstants.HeaderKey.HEADER_1, "header1");
-                        map.put(MyConstants.HeaderKey.HEADER_2, "header2");
-
-                        return map;
-                    }
+                    override val headerMap: Map<String, String>
+                        get() {
+                            val map = HashMap<String, String>()
+                            map[MyConstants.HeaderKey.HEADER_1] = "header1"
+                            map[MyConstants.HeaderKey.HEADER_2] = "header2"
+                            return map
+                        }
 
                     /**
                      * 配置默认Auth：公共get/post请求的url拼接参数。（可选）
                      */
-                    @NotNull
-                    @Override
-                    public Map<String, String> getParamsMap() {
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(MyConstants.ParamsKey.PARAMS_1, "tom");
-                        map.put(MyConstants.ParamsKey.PARAMS_2, "jake");
-
-                        return map;
-                    }
+                    override val paramsMap: Map<String, String>
+                        get() {
+                            val map = HashMap<String, String>()
+                            map[ParamsKey.PARAMS_1] = "tom"
+                            map[ParamsKey.PARAMS_2] = "jake"
+                            return map
+                        }
 
                     /**
                      * 配置默认Auth：公共post请求的通用参数。（可选）
                      */
-                    @NotNull
-                    @Override
-                    public Map<String, String> getBodyMap() {
-                        //code...
-                        return null;
-                    }
-
+                    override val bodyMap: Map<String, String>
+                        get() = super.bodyMap // 建议baseUrl以斜杠结尾，避免Retrofit报错
 
                     /**
                      * 配置通用Auth默认baseUrl的domain
                      */
-                    @NotNull
-                    @Override
-                    public String getBaseUrl() {
+                    override val baseUrl: String
                         // 建议baseUrl以斜杠结尾，避免Retrofit报错
-                        return BuildConfig.DEBUG ? ServerAddressDefault[0] : ServerAddressDefault[1];
-                    }
+                        get() = if (BuildConfig.DEBUG) ServerAddress.ServerAddressDefault[0] else ServerAddress.ServerAddressDefault[1]
 
                     /**
                      * 可传入多个BaseUrl，通过制定Header中Domain-Host字段来区分。（可选）
                      * @return
                      */
-                    @NotNull
-                    @Override
-                    public Map<String, String> getBaseUrls() {
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(MyConstants.ServerDomainKey.URL1, BuildConfig.DEBUG ? ServerAddress1[0] : ServerAddress1[1]);
-                        map.put(MyConstants.ServerDomainKey.URL2, BuildConfig.DEBUG ? ServerAddress2[0] : ServerAddress2[1]);
-
-                        return map;
-                    }
+                    override val baseUrls: Map<String, String>
+                        get() {
+                            val map = HashMap<String, String>()
+                            map[ServerDomainKey.URL1] = if (BuildConfig.DEBUG) ServerAddress.ServerAddress1[0] else ServerAddress.ServerAddress1[1]
+                            map[ServerDomainKey.URL2] = if (BuildConfig.DEBUG) ServerAddress.ServerAddress2[0] else ServerAddress.ServerAddress2[1]
+                            return map
+                        }
 
                     /**
                      * 传入Gson实例。（可选）
                      * @return
                      */
-                    @Override
-                    public Gson getGsonInstance() {
-                        return null;
-                    }
-
-                });
+                    override val gsonInstance: Gson?
+                        get() = null
+                })
     }
+
 }

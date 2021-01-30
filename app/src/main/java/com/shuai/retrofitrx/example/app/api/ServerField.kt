@@ -1,14 +1,11 @@
-package com.shuai.retrofitrx.example.app.api;
+package com.shuai.retrofitrx.example.app.api
 
 /**
  * 服务器的拼接字段
  */
-
-public class ServerField {
-
+object ServerField {
     //强烈建议采取绝对路径
-    public static final String CHECK_ROM = "sales/app/v1/checkRomVersion";
-    public static final String LOGIN = "login/test";
-    public static final String REGISGER = "register/test";
-
+    const val CHECK_ROM = "sales/app/v1/checkRomVersion"
+    const val LOGIN = "login/test"
+    const val REGISGER = "register/test"
 }
