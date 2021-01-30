@@ -145,8 +145,8 @@ dependencies {
 ```
 public interface JavaTestInterface {
 
-    @Headers({NetConstants.HeaderKey.DomainHost + ":" + AppConstants.ServerDomainKey.URL1})
-    @GET(ServerField.TEST_CHECK_ROM)
+    @Headers({"Domain-Host:" + "url1"})
+    @GET("sales/v1/test/")
     Observable<BaseResponse<TestBean>> testRequestGet(
             @Query("app_source") String appSource,
             @Query("isCustomizeRom") boolean isCustomizeRom,
@@ -163,7 +163,7 @@ public interface JavaTestInterface {
 
 **注意：**
 
-对于字段地址（这里的sales/v1/test）请务必采用绝对地址（即不以斜杠开头）。否则会影响到框架对于baseUrl的替换。
+对于字段地址（这里的"sales/v1/test"）请务必采用绝对地址（即不以斜杠开头）。否则会影响到框架对于baseUrl的替换。
 
 同时在实际开发中，我们也强烈建议采用绝对地址，避免不必要的路径错误。
 
@@ -182,9 +182,9 @@ ApiFactory.getApiService(JavaTestInterface.class)
 ##### 2、扩展请求方式：
 ```
 public static AuthRetrofitFactory myAuthRetrofitFactory
-            = new AuthRetrofitFactory(MyApplication.getInstance(),new MyAppNetRequestConfig());
+            = new AuthRetrofitFactory(App.getInstance(), new JavaNetRequestConfig());
 
- ApiFactory.getApiService(myAuthRetrofitFactory,TestServiceApi.class)
+ApiFactory.getApiService(myAuthRetrofitFactory,TestServiceApi.class)
                 .testRequestGet(app_source, isCustomizeRom, versionname)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
