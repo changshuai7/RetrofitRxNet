@@ -192,9 +192,3 @@ ApiFactory.getApiService(myAuthRetrofitFactory,TestServiceApi.class)
 ```
 
 此方式通过自定义创建Retrofit工厂（AuthRetrofitFactory）来请求网络，更灵活。再此基础上，可以自定义某个网络请求的NetRequestConfigProvider。此处NetRequestConfigProvider的配置会优先于Application中的配置。
-
-
-## 5、写在后面
-针对有些业务，网络请求地址可能出现极其繁多复杂，难于管理的情况，baseUrl动态替换的方案可能略显逊色。我们建议你可以通过全路径传入url地址来请求网络。
-
-对于管理全路径的Url，可以参考我的另一个项目：[ServerAddressHelper](https://github.com/changshuai7/ServerAddressHelper)，该项实现了灵活管理全路径服务器的地址，目前已经在若干大型应用中实践，具有良好稳定性。
