@@ -3,7 +3,7 @@ package com.shuai.retrofitrx.example.app.constants
 /**
  * 常量配置
  */
-class MyConstants {
+class AppConstants {
     object CommonKey {
         const val STATUS = "status"
         const val ERR_MSG = "err_msg"
@@ -27,9 +27,7 @@ class MyConstants {
         const val URL2 = "url2"
     }
 
-    interface Authority {
-        companion object {
-            const val FILE_AUTHORITY = "com.example.app.fileProvider"
-        }
+    object Authority {
+        const val FILE_AUTHORITY = "com.example.app.fileProvider"
     }
 }

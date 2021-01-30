@@ -6,7 +6,7 @@ import com.shuai.retrofitrx.constants.NetConstants
 /**
  * 日志简易管理类
  */
-class Logger {
+class NetLogger {
 
     companion object {
         private var isLogEnable = true

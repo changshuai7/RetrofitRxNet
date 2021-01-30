@@ -1,31 +1,21 @@
-package com.shuai.retrofitrx.example.app
+package com.shuai.retrofitrx.example.app._kotlin
 
-import android.app.Application
-import android.os.Handler
-import android.os.Process
 import com.google.gson.Gson
-import com.shuai.csnet.example.app.BuildConfig
 import com.shuai.retrofitrx.config.NetConfig
 import com.shuai.retrofitrx.config.provider.NetBaseConfigProvider
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
+import com.shuai.retrofitrx.example.app.App
+import com.shuai.retrofitrx.example.app.BuildConfig
 import com.shuai.retrofitrx.example.app.api.ServerAddress
-import com.shuai.retrofitrx.example.app.constants.MyConstants
-import com.shuai.retrofitrx.example.app.constants.MyConstants.ParamsKey
-import com.shuai.retrofitrx.example.app.constants.MyConstants.ServerDomainKey
+import com.shuai.retrofitrx.example.app.constants.AppConstants
+import com.shuai.retrofitrx.example.app.constants.AppConstants.ParamsKey
+import com.shuai.retrofitrx.example.app.constants.AppConstants.ServerDomainKey
 import java.util.*
 
-class MyApplication : Application() {
-
-    companion object {
-        //获取单例对象  //单例
-        lateinit var instance: MyApplication
-            private set
-
-    }
+class KTApp : App() {
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
         initNet()
     }
 
@@ -53,8 +43,8 @@ class MyApplication : Application() {
                     override val headerMap: Map<String, String>
                         get() {
                             val map = HashMap<String, String>()
-                            map[MyConstants.HeaderKey.HEADER_1] = "header1"
-                            map[MyConstants.HeaderKey.HEADER_2] = "header2"
+                            map[AppConstants.HeaderKey.HEADER_1] = "header1"
+                            map[AppConstants.HeaderKey.HEADER_2] = "header2"
                             return map
                         }
 

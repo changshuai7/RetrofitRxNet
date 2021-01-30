@@ -3,7 +3,7 @@ package com.shuai.retrofitrx.config
 import android.app.Application
 import com.shuai.retrofitrx.config.provider.NetBaseConfigProvider
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
-import com.shuai.retrofitrx.utils.Logger
+import com.shuai.retrofitrx.utils.NetLogger
 
 /**
  * 网络请求库的统一配置
@@ -50,7 +50,7 @@ class NetConfig {
 
             fun baseConfig(baseConfigProvider: NetBaseConfigProvider): Config {
                 this.baseConfigProvider = baseConfigProvider
-                Logger.debug(baseConfigProvider.isLogDebug) //设置log日志模式
+                NetLogger.debug(baseConfigProvider.isLogDebug) //设置log日志模式
                 return this
             }
 

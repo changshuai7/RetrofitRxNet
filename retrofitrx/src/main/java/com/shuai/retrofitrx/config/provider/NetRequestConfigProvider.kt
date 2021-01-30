@@ -1,7 +1,6 @@
 package com.shuai.retrofitrx.config.provider
 
 import com.google.gson.Gson
-import java.util.*
 
 /**
  * 请求配置

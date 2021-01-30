@@ -3,7 +3,7 @@ package com.shuai.retrofitrx.net.interceptor
 import com.shuai.retrofitrx.config.NetConfig
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
 import com.shuai.retrofitrx.constants.NetConstants
-import com.shuai.retrofitrx.utils.Logger
+import com.shuai.retrofitrx.utils.NetLogger
 import com.shuai.retrofitrx.utils.Util
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -36,8 +36,8 @@ class MoreBaseUrlInterceptor : Interceptor {
         val builder = originalRequest.newBuilder()
         //获取头信息的集合如
         val domainHostList = originalRequest.headers(NetConstants.HeaderKey.DomainHost)
-        Logger.d("未拦截替换baseUrl前的原始URL:$originalUrl")
-        if (domainHostList != null && domainHostList.size > 0) {
+        NetLogger.d("未拦截替换baseUrl前的原始URL:$originalUrl")
+        if (domainHostList.size > 0) {
             //删除原有配置中的值,就是namesAndValues集合里的值
             builder.removeHeader(NetConstants.HeaderKey.DomainHost)
             //获取头信息中配置的value
@@ -60,7 +60,7 @@ class MoreBaseUrlInterceptor : Interceptor {
                         val newBaseUrlPathSegments = Util.removeStrListEmpty(newBaseUrl.encodedPathSegments())
                         val oldBaseUrlPathSegments = Util.removeStrListEmpty(oldBaseUrl.encodedPathSegments())
                         if (!originalPathSegments.containsAll(oldBaseUrlPathSegments)) {
-                            Logger.e("""
+                            NetLogger.e("""
                                         -->>>>>>
                                         框架发现，你请求的完整URL：$originalUrl
                                         其中未包含BaseUrl的部分segments字段内容：$oldBaseUrl

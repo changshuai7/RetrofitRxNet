@@ -1,17 +1,15 @@
-package com.shuai.retrofitrx.example.app.net.core
+package com.shuai.retrofitrx.example.app.net
 
 import io.reactivex.disposables.CompositeDisposable
 
 /**
- * MVP-回调接口
- * Model->Presenter回调接口
+ * 回调接口
  *
  */
 abstract class AppDataCallback<T> {
 
     //用户控制RxJava对网络请求的取消订阅
-    var disposable: CompositeDisposable? = null
-        private set
+    private var disposable: CompositeDisposable? = null
 
     fun setDisposable(disposable: CompositeDisposable?): AppDataCallback<T> {
         this.disposable = disposable

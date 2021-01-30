@@ -3,7 +3,7 @@ package com.shuai.retrofitrx.net.interceptor
 import com.shuai.retrofitrx.config.NetConfig
 import com.shuai.retrofitrx.config.provider.NetRequestConfigProvider
 import com.shuai.retrofitrx.constants.NetConstants
-import com.shuai.retrofitrx.utils.Logger
+import com.shuai.retrofitrx.utils.NetLogger
 import com.shuai.retrofitrx.utils.Util
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -35,8 +35,8 @@ class MoreBaseUrlInterceptorSimple : Interceptor {
         val builder = originalRequest.newBuilder()
         //获取头信息的集合如
         val domainHostList = originalRequest.headers(NetConstants.HeaderKey.DomainHost)
-        Logger.d("未拦截替换baseUrl前的原始URL:$originalUrl")
-        if (domainHostList != null && domainHostList.size > 0) {
+        NetLogger.d("未拦截替换baseUrl前的原始URL:$originalUrl")
+        if (domainHostList.size > 0) {
             //删除原有配置中的值,就是namesAndValues集合里的值
             builder.removeHeader(NetConstants.HeaderKey.DomainHost)
             //获取头信息中配置的value

@@ -27,12 +27,12 @@ class Util {
          */
         fun checkUrl(url: String?): Boolean {
             if (url == null) {
-                Logger.e("URL检查出异常：", "url为空")
+                NetLogger.e("URL检查出异常：", "url为空")
                 return false
             }
             val httpUrl = HttpUrl.parse(url)
             if (httpUrl == null) {
-                Logger.e("URL检查出异常：", "$url->为非法URL")
+                NetLogger.e("URL检查出异常：", "$url->为非法URL")
                 return false
             }
             return true

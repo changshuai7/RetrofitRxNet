@@ -1,21 +1,20 @@
-package com.shuai.retrofitrx.example.app.net.core
+package com.shuai.retrofitrx.example.app.net
 
 import android.widget.Toast
-import com.shuai.retrofitrx.example.app.MyApplication
-import com.shuai.retrofitrx.utils.Util.Companion.isStrNullOrEmpty
+import com.shuai.retrofitrx.example.app.App
+import com.shuai.retrofitrx.utils.Util
 
 /**
  * 统一BaseObserver处理
  *
- * @author changshuai
  */
 class AppObserver<T>(private val dataCallback: AppDataCallback<T>) : BaseObserver<T>() {
 
     override fun handleError(errorCode: Int, errMsg: String?, err: Throwable) {
-        if (!isStrNullOrEmpty(errMsg)) {
-            Toast.makeText(MyApplication.instance, "$errMsg($errorCode)", Toast.LENGTH_SHORT).show()
+        if (!Util.isStrNullOrEmpty(errMsg)) {
+            Toast.makeText(App.instance, "$errMsg($errorCode)", Toast.LENGTH_SHORT).show()
         } else if (errorCode != 0) {
-            Toast.makeText(MyApplication.instance, errorCode.toString() + "", Toast.LENGTH_SHORT).show()
+            Toast.makeText(App.instance, errorCode.toString() + "", Toast.LENGTH_SHORT).show()
         }
         dataCallback.onError(errorCode, errMsg, err)
     }

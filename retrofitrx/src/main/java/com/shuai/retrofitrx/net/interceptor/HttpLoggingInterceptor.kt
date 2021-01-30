@@ -1,5 +1,6 @@
 package com.shuai.retrofitrx.net.interceptor
 
+import com.shuai.retrofitrx.utils.NetLogger
 import okhttp3.*
 import okhttp3.internal.http.HttpHeaders
 import okio.Buffer
@@ -11,11 +12,11 @@ import java.util.logging.Logger
 /**
  * 日志拦截器
  */
-class HttpLoggingInterceptor(tag: String?) : Interceptor {
+class HttpLoggingInterceptor(tag: String) : Interceptor {
     @Volatile
     private var printLevel = Level.NONE
     private var colorLevel: java.util.logging.Level? = null
-    private val logger: Logger
+    private val logger: java.util.logging.Logger
 
     enum class Level {
         NONE,  //不打印log
@@ -104,7 +105,7 @@ class HttpLoggingInterceptor(tag: String?) : Interceptor {
                 }
             }
         } catch (e: Exception) {
-            com.shuai.retrofitrx.utils.Logger.printStackTrace(e)
+            NetLogger.printStackTrace(e)
         } finally {
             log("--> END " + request.method())
         }
@@ -142,7 +143,7 @@ class HttpLoggingInterceptor(tag: String?) : Interceptor {
                 }
             }
         } catch (e: Exception) {
-            com.shuai.retrofitrx.utils.Logger.printStackTrace(e)
+            NetLogger.printStackTrace(e)
         } finally {
             log("<-- END HTTP")
         }
@@ -158,7 +159,7 @@ class HttpLoggingInterceptor(tag: String?) : Interceptor {
             val charset = getCharset(body.contentType())
             log("\tbody:" + buffer.readString(charset))
         } catch (e: Exception) {
-            com.shuai.retrofitrx.utils.Logger.printStackTrace(e)
+            NetLogger.printStackTrace(e)
         }
     }
 

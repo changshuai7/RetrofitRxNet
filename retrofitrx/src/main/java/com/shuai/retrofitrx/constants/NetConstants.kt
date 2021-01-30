@@ -8,6 +8,5 @@ object NetConstants {
 
     object HeaderKey {
         const val DomainHost = "Domain-Host"
-        const val HeaderAuto = "Header-Auto"
     }
 }

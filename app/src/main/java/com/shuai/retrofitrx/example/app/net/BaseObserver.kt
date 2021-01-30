@@ -1,10 +1,11 @@
-package com.shuai.retrofitrx.example.app.net.core
+package com.shuai.retrofitrx.example.app.net
 
 import android.text.TextUtils
-import com.shuai.csnet.example.app.R
 import com.shuai.retrofitrx.config.NetConfig
-import com.shuai.retrofitrx.example.app.constants.MyConstants.CommonKey
+import com.shuai.retrofitrx.example.app.R
+import com.shuai.retrofitrx.example.app.constants.AppConstants.CommonKey
 import com.shuai.retrofitrx.net.exception.RequestException
+import com.shuai.retrofitrx.utils.NetLogger
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -19,7 +20,7 @@ import java.net.UnknownHostException
  * 最底层Observer
  *
  * @param <T>
-</T> */
+ */
 abstract class BaseObserver<T> : Observer<BaseResponse<T>> {
 
     private var compositeDisposable: CompositeDisposable? = null
@@ -46,8 +47,8 @@ abstract class BaseObserver<T> : Observer<BaseResponse<T>> {
     }
 
     override fun onError(e: Throwable) {
-        parseError(e)
         e.printStackTrace()
+        parseError(e)
         handleFinally()
     }
 
@@ -60,12 +61,12 @@ abstract class BaseObserver<T> : Observer<BaseResponse<T>> {
             baseResponse.isSuccess -> { // 成功
                 handleData(baseResponse)
             }
-            baseResponse.status == MyErrorInfoConstant.CODE_LOGIN_EXPIRED -> { //登陆过期
+            baseResponse.status == BaseErrorConstant.CODE_LOGIN_EXPIRED -> { //登陆过期
                 handleLogout()
             }
             else -> { //其他错误
                 val errorCode = baseResponse.status
-                val errMsg = if (!TextUtils.isEmpty(baseResponse.errMsg)) baseResponse.errMsg else MyErrorInfoConstant.MESSAGE_EXCEPTION
+                val errMsg = if (!TextUtils.isEmpty(baseResponse.errMsg)) baseResponse.errMsg else BaseErrorConstant.MESSAGE_EXCEPTION
                 handleError(errorCode, errMsg, RequestException(errMsg!!))
             }
         }
@@ -89,42 +90,41 @@ abstract class BaseObserver<T> : Observer<BaseResponse<T>> {
                 }
             }
         } else if (ex is UnknownHostException) {
-            errorCode = MyErrorInfoConstant.CODE_UNKNOWN_HOST
-            errMsg = MyErrorInfoConstant.MESSAGE_UNKNOWN_HOST
+            errorCode = BaseErrorConstant.CODE_UNKNOWN_HOST
+            errMsg = BaseErrorConstant.MESSAGE_UNKNOWN_HOST
         } else if (ex is ConnectException) {
-            errorCode = MyErrorInfoConstant.CODE_REQUEST_TIMEOUT
-            errMsg = MyErrorInfoConstant.MESSAGE_REQUEST_TIMEOUT
+            errorCode = BaseErrorConstant.CODE_REQUEST_TIMEOUT
+            errMsg = BaseErrorConstant.MESSAGE_REQUEST_TIMEOUT
         } else if (ex is SocketTimeoutException) {
-            errorCode = MyErrorInfoConstant.CODE_RESPONSE_TIMEOUT
-            errMsg = MyErrorInfoConstant.MESSAGE_RESPONSE_TIMEOUT
+            errorCode = BaseErrorConstant.CODE_RESPONSE_TIMEOUT
+            errMsg = BaseErrorConstant.MESSAGE_RESPONSE_TIMEOUT
         } else {
-            errorCode = MyErrorInfoConstant.CODE_OTHER_EXCEPTION
+            errorCode = BaseErrorConstant.CODE_OTHER_EXCEPTION
             errMsg = NetConfig.app.getString(R.string.error_network_other_exception, ex.localizedMessage)
         }
         handleError(errorCode, errMsg, ex)
     }
 
 
-    private fun checkLoginExpired(response: String): Boolean {
-        return if (TextUtils.isEmpty(response)) {
-            false
-        } else try {
+    private fun checkLoginExpired(response: String) {
+        if (TextUtils.isEmpty(response)) {
+            return
+        }
+        try {
             val jsonObject = JSONObject(response)
             val status = jsonObject.getInt(CommonKey.STATUS)
-            if (status == MyErrorInfoConstant.CODE_LOGIN_EXPIRED) {
+            if (status == BaseErrorConstant.CODE_LOGIN_EXPIRED) {
                 handleLogout()
-                return true
             }
-            false
+
         } catch (e: Exception) {
             e.printStackTrace()
-            false
         }
     }
 
     private fun handleLogout() {
 
-        // TODO :登录过期的方法
+        NetLogger.e("登录过期" )
     }
 
 }
