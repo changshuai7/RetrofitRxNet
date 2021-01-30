@@ -184,7 +184,7 @@ ApiFactory.getApiService(JavaTestInterface.class)
 public static AuthRetrofitFactory myAuthRetrofitFactory
             = new AuthRetrofitFactory(App.getInstance(), new JavaNetRequestConfig());
 
- ApiFactory.getApiService(myAuthRetrofitFactory,TestServiceApi.class)
+ApiFactory.getApiService(myAuthRetrofitFactory,TestServiceApi.class)
                 .testRequestGet(app_source, isCustomizeRom, versionname)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
