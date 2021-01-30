@@ -2,13 +2,10 @@
     <string name="app_name">RetrofitRxNet</string>
 
     <!-- 网络错误 -->
-
     <string name="error_network_other_exception">请求出现异常：%s</string>
     <string name="error_network_request">请求错误</string>
     <string name="error_network_unknown_host">域名解析失败，请检查网络是否正常</string>
     <string name="error_network_request_timeout">请求超时</string>
     <string name="error_network_response_timeout">服务器无响应</string>
-    <string name="error_network_response_empty">返回空</string>
-
     <string name="error_login_expired">app_token 过期，请重新登录</string>
 </resources>

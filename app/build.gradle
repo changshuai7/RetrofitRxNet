@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -39,23 +40,24 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 
 dependencies {
-    /*************Base-Lib*************/
-    //Google - V7
-    implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
-    //Google - V4
-    implementation "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"
-    //Google - Design
-    implementation "com.android.support:design:$rootProject.ext.supportLibraryVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    //Google - Gson
-    //noinspection GradleDependency
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation "androidx.appcompat:appcompat:$appcompat"
+    implementation "com.google.code.gson:gson:$gson"
 
     implementation project(':retrofitrx')
-//    implementation 'com.shuai:retrofit-rx-net:0.0.1'
 
+    //implementation 'com.shuai:retrofit-rx-net:0.0.1'
+
+}
+repositories {
+    mavenCentral()
 }
