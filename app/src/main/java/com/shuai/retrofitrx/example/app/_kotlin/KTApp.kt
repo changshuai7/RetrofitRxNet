@@ -88,8 +88,8 @@ class KTApp : App() {
                      * 传入Gson实例。（可选）
                      * @return
                      */
-                    override val gsonInstance: Gson?
-                        get() = null
+                    override val gsonInstance: Gson
+                        get() = super.gsonInstance
                 })
     }
 

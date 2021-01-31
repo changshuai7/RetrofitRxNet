@@ -28,16 +28,19 @@ abstract class AbstractRetrofitFactory : IRetrofitCreator {
         this.netRequestConfigProvider = netRequestConfigProvider
     }
 
-    abstract val client: OkHttpClient
     override fun create(): Retrofit? {
         if (netRequestConfigProvider != null) {
             return Retrofit.Builder()
                     .client(client)
                     .baseUrl(netRequestConfigProvider!!.baseUrl)
-                    .addConverterFactory(if (netRequestConfigProvider!!.gsonInstance == null) GsonConverterFactory.create() else GsonConverterFactory.create(netRequestConfigProvider!!.gsonInstance))
+                    .addConverterFactory(GsonConverterFactory.create(netRequestConfigProvider!!.gsonInstance))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build()
         }
         return null
     }
+
+    /////////////// abstract ///////////////
+
+    abstract val client: OkHttpClient
 }
