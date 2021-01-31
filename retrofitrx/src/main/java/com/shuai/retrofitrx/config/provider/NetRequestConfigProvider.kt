@@ -40,6 +40,6 @@ abstract class NetRequestConfigProvider {
      * 传入Gson实例。（可选）
      * @return
      */
-    open val gsonInstance: Gson?
-        get() = null
+    open val gsonInstance: Gson
+        get() = Gson()
 }

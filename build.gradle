@@ -45,7 +45,7 @@ ext {
     userOrg = 'shuai'
     groupId = 'com.shuai'
     artifactId = 'retrofit-rx-net'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'a tools for android developer to request network'
     website = 'https://github.com/changshuai7/RetrofitRxNet'
 

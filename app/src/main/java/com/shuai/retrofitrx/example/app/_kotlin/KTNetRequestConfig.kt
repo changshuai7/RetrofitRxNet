@@ -44,6 +44,6 @@ class KTNetRequestConfig : NetRequestConfigProvider() {
             return map
         }
 
-    override val gsonInstance: Gson?
-        get() = null
+    override val gsonInstance: Gson
+        get() = super.gsonInstance
 }

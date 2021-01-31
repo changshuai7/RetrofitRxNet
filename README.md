@@ -114,9 +114,10 @@ dependencies {
                  * 传入Gson实例。（可选）
                  * @return
                  */
+                @NotNull
                 @Override
                 public Gson getGsonInstance() {
-                    return null;
+                    return super.getGsonInstance();
                 }
 
             });

@@ -11,6 +11,8 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.logging.Level
+import java.util.concurrent.TimeUnit
+
 
 class AuthOkHttpClientBuilder : AbstractOkHttpClientBuilder {
 
@@ -30,20 +32,29 @@ class AuthOkHttpClientBuilder : AbstractOkHttpClientBuilder {
     }
 
     override val okHttpClientBuilder: OkHttpClient.Builder
-        get() = super.okHttpClientBuilder
+        get() = OkHttpClient().newBuilder()
+
+    override fun setTimeOut(builder: OkHttpClient.Builder) {
+        if (NetConfig.config.baseConfigProvider.isDebug) {
+            builder.connectTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS)
+                    .readTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS)
+                    .writeTimeout(TIMEOUT_DEBUG, TimeUnit.SECONDS)
+        } else {
+            builder.connectTimeout(TIMEOUT_REAL, TimeUnit.SECONDS)
+                    .readTimeout(TIMEOUT_REAL, TimeUnit.SECONDS)
+                    .writeTimeout(TIMEOUT_REAL, TimeUnit.SECONDS)
+        }
+    }
 
     override fun setRequestInterceptor(builder: OkHttpClient.Builder) {
-        /**
-         * URL拦截解决多BaseURL的问题。
-         */
+
+        /**URL拦截解决多BaseURL的问题。*/
         builder.addInterceptor(MoreBaseUrlInterceptor(netRequestConfigProvider))
-        /**
-         * 增加默认的全局配置参数
-         */
+
+        /** 增加默认的全局配置参数*/
         builder.addInterceptor(AuthParamsInterceptor(netRequestConfigProvider))
-        /**
-         * 日志拦截器
-         */
+
+        /**日志拦截器*/
         val logInterceptor = HttpLoggingInterceptor(NetConstants.TAG)
         //log打印级别，决定了log显示的详细程度
         logInterceptor.setPrintLevel(if (NetConfig.config.baseConfigProvider.isLogDebug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
@@ -60,5 +71,8 @@ class AuthOkHttpClientBuilder : AbstractOkHttpClientBuilder {
     companion object {
         const val OK_HTTP_CACHE_SIZE = 10 * 1024 * 1024
         const val OK_HTTP_CACHE_FILE_NAME = "OKHttpCache"
+        const val TIMEOUT_DEBUG: Long = 20
+        const val TIMEOUT_REAL: Long = 15
     }
+
 }

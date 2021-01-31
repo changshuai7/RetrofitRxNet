@@ -59,8 +59,9 @@ public class JavaNetRequestConfig extends NetRequestConfigProvider {
         return map;
     }
 
+    @NotNull
     @Override
     public Gson getGsonInstance() {
-        return null;
+        return super.getGsonInstance();
     }
 }
