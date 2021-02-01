@@ -1,6 +1,4 @@
 buildscript {
-    ext.kotlin_version = '1.4.21'
-
     repositories {
         google()
         jcenter()
@@ -8,7 +6,7 @@ buildscript {
     dependencies {
         //noinspection GradleDependency
         classpath 'com.android.tools.build:gradle:3.5.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
@@ -31,23 +29,6 @@ task clean(type: Delete) {
 }
 
 ext {
-
-    buildToolsVersion = "28.0.3"
-    compileSdkVersion = 28
-    minSdkVersion = 19
-    targetSdkVersion = 28
-
-    appcompat = '1.2.0'
-    material = '1.2.1'
-    legacy_v4 = '1.0.0'
-    gson = '2.8.6'
-
-    userOrg = 'shuai'
-    groupId = 'com.shuai'
-    artifactId = 'retrofit-rx-net'
-    publishVersion = '1.0.2'
-    desc = 'a tools for android developer to request network'
-    website = 'https://github.com/changshuai7/RetrofitRxNet'
 
 }
 
